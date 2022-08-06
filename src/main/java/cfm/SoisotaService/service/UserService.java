@@ -2,6 +2,7 @@ package cfm.SoisotaService.service;
 
 import cfm.SoisotaService.exception.CustomException;
 import cfm.SoisotaService.model.AppUser;
+import cfm.SoisotaService.model.AppUserRole;
 import cfm.SoisotaService.repository.UserRepository;
 import cfm.SoisotaService.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -62,4 +66,25 @@ public class UserService {
     return jwtTokenProvider.createToken(username, userRepository.findByUsername(username).getAppUserRoles());
   }
 
+  public List<AppUser> getAllUser() {
+    return userRepository.findAll();
+  }
+
+  public void initUserDefault() {
+    AppUser admin = new AppUser();
+    admin.setUsername("admin");
+    admin.setPassword("admin");
+    admin.setEmail("admin@email.com");
+    admin.setAppUserRoles(new ArrayList<AppUserRole>(Arrays.asList(AppUserRole.ROLE_ADMIN)));
+
+    this.signup(admin);
+
+    AppUser client = new AppUser();
+    client.setUsername("client");
+    client.setPassword("client");
+    client.setEmail("client@email.com");
+    client.setAppUserRoles(new ArrayList<AppUserRole>(Arrays.asList(AppUserRole.ROLE_CLIENT)));
+
+    this.signup(client);
+  }
 }
