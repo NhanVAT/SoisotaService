@@ -17,21 +17,21 @@ import org.springframework.context.annotation.Bean;
 @EntityScan(basePackages = {"cfm.SoisotaService.model"})
 public class SoisotaServiceApplication implements CommandLineRunner {
 
-	final UserService userService;
+    final UserService userService;
 
-	final RoleService roleService;
+    final RoleService roleService;
 
-	public static void main(String[] args) {
-		SpringApplication.run(SoisotaServiceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SoisotaServiceApplication.class, args);
+    }
 
-	@Bean
-	public ModelMapper modelMapper() {
-		return new ModelMapper();
-	}
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 
-	@Override
-	public void run(String... params) throws Exception {
+    @Override
+    public void run(String... params) throws Exception {
 		// Add role mặc định
 		if (roleService.getAllRole().isEmpty()) {
 			roleService.initRoleDefault();
@@ -41,5 +41,5 @@ public class SoisotaServiceApplication implements CommandLineRunner {
 		if (userService.getAllUser().isEmpty()) {
 			userService.initUserDefault();
 		}
-	}
+    }
 }

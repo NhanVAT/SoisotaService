@@ -16,12 +16,20 @@ public class RoleService {
         return roleRepository.findAll();
     }
 
+    public AppRole findByRoleId(String name) {
+        return roleRepository.findByRoleId(name);
+    }
+
+
     public void initRoleDefault() {
         AppRole role_1 = new AppRole();
         AppRole role_2 = new AppRole();
 
-        role_1.setName("ROLE_ADMIN");
-        role_2.setName("ROLE_CLIENT");
+        role_1.setRoleId("ROLE_ADMIN");
+        role_2.setRoleId("ROLE_USER");
+
+        role_1.setRoleName("Quản trị viên");
+        role_2.setRoleName("Người dùng");
 
         roleRepository.save(role_1);
         roleRepository.save(role_2);
