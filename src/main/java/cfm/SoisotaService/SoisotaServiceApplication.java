@@ -41,5 +41,6 @@ public class SoisotaServiceApplication implements CommandLineRunner {
 		if (userService.getAllUser().isEmpty()) {
 			userService.initUserDefault();
 		}
+        //add comment
     }
 }
