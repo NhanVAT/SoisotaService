@@ -49,4 +49,4 @@ UserController:
   signup: Creates user and returns its JWT token
   delete: Deletes specific user by username
   search: Returns specific user by username
-  me: Returns current user's data
+  getInfoCurrentUser: Returns current user's data

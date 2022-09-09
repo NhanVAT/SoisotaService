@@ -1,17 +1,17 @@
-package cfm.SoisotaService.model;
+package cfm.SoisotaService.entities;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 @Entity
 @Data
 @NoArgsConstructor
 @Table(name = "app_roles")
-public class AppRole {
+public class AppRole extends AbstractAuditingEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

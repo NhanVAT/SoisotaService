@@ -1,11 +1,14 @@
-package cfm.SoisotaService.service;
+package cfm.SoisotaService.services.impl;
 
+import cfm.SoisotaService.entities.AppRole;
+import cfm.SoisotaService.entities.AppUser;
 import cfm.SoisotaService.exception.CustomException;
-import cfm.SoisotaService.model.AppRole;
-import cfm.SoisotaService.model.AppUser;
-import cfm.SoisotaService.repository.UserRepository;
+import cfm.SoisotaService.repositories.UserRepository;
 import cfm.SoisotaService.security.JwtTokenProvider;
+import cfm.SoisotaService.services.RoleService;
+import cfm.SoisotaService.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,17 +17,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service
-@RequiredArgsConstructor
-public class UserService {
 
+@Service(value = "userService")
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
+    @Autowired
     private final UserRepository userRepository;
+    @Autowired
     private final PasswordEncoder passwordEncoder;
+    @Autowired
     private final JwtTokenProvider jwtTokenProvider;
+    @Autowired
     private final AuthenticationManager authenticationManager;
+    @Autowired
     private final RoleService roleService;
 
     public String signin(String username, String password) {
@@ -58,7 +68,7 @@ public class UserService {
         return appUser;
     }
 
-    public AppUser whoami(HttpServletRequest req) {
+    public AppUser getInfoCurrentUser(HttpServletRequest req) {
         return userRepository.findByUserName(jwtTokenProvider.getUsername(jwtTokenProvider.resolveToken(req)));
     }
 
@@ -76,6 +86,7 @@ public class UserService {
         admin.setPassword("admin");
         admin.setEmail("admin@email.com");
         admin.setActive(true);
+        admin.setCreatedBy("admin");
 
         AppRole roleAdmin = roleService.findByRoleId("ROLE_ADMIN");
         Set<AppRole> roleSetAdmin = new HashSet<>();
@@ -86,10 +97,11 @@ public class UserService {
         this.signup(admin);
 
         AppUser client = new AppUser();
-        client.setUserName("client");
-        client.setPassword("client");
-        client.setEmail("client@email.com");
+        client.setUserName("user");
+        client.setPassword("user");
+        client.setEmail("user@email.com");
         client.setActive(true);
+        client.setCreatedBy("admin");
 
         AppRole roleUser = roleService.findByRoleId("ROLE_USER");
         Set<AppRole> roleSetUser = new HashSet<>();

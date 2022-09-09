@@ -1,7 +1,7 @@
 package cfm.SoisotaService.security;
 
 import cfm.SoisotaService.exception.CustomException;
-import cfm.SoisotaService.model.AppRole;
+import cfm.SoisotaService.entities.AppRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;

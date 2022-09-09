@@ -1,15 +1,18 @@
-package cfm.SoisotaService.service;
+package cfm.SoisotaService.services.impl;
 
-import cfm.SoisotaService.model.AppRole;
-import cfm.SoisotaService.repository.RoleRepository;
+import cfm.SoisotaService.entities.AppRole;
+import cfm.SoisotaService.repositories.RoleRepository;
+import cfm.SoisotaService.services.RoleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Service(value = "roleService")
 @RequiredArgsConstructor
-public class RoleService {
+public class RoleServiceImpl implements RoleService {
+    @Autowired
     private final RoleRepository roleRepository;
 
     public List<AppRole> getAllRole() {
@@ -20,18 +23,20 @@ public class RoleService {
         return roleRepository.findByRoleId(name);
     }
 
-
     public void initRoleDefault() {
         AppRole role_1 = new AppRole();
-        AppRole role_2 = new AppRole();
-
         role_1.setRoleId("ROLE_ADMIN");
-        role_2.setRoleId("ROLE_USER");
-
         role_1.setRoleName("Quản trị viên");
-        role_2.setRoleName("Người dùng");
+        role_1.setCreatedBy("admin");
 
         roleRepository.save(role_1);
+
+        AppRole role_2 = new AppRole();
+        role_2.setRoleId("ROLE_USER");
+        role_2.setRoleName("Người dùng");
+        role_2.setCreatedBy("admin");
+
         roleRepository.save(role_2);
     }
+
 }

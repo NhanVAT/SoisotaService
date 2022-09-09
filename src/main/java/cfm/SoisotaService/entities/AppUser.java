@@ -1,17 +1,18 @@
-package cfm.SoisotaService.model;
+package cfm.SoisotaService.entities;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Set;
 
 @Entity
 @Data
 @NoArgsConstructor
 @Table(name = "app_users")
-public class AppUser {
+public class AppUser extends AbstractAuditingEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

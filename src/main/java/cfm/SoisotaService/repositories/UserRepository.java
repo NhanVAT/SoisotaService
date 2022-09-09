@@ -1,8 +1,7 @@
-package cfm.SoisotaService.repository;
+package cfm.SoisotaService.repositories;
 
-import cfm.SoisotaService.model.AppUser;
+import cfm.SoisotaService.entities.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;

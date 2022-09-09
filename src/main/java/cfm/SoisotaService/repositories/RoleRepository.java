@@ -1,6 +1,6 @@
-package cfm.SoisotaService.repository;
+package cfm.SoisotaService.repositories;
 
-import cfm.SoisotaService.model.AppRole;
+import cfm.SoisotaService.entities.AppRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,9 +1,10 @@
 package cfm.SoisotaService;
 
-import cfm.SoisotaService.service.RoleService;
-import cfm.SoisotaService.service.UserService;
+import cfm.SoisotaService.services.RoleService;
+import cfm.SoisotaService.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,11 +15,11 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 @RequiredArgsConstructor
 @EnableConfigurationProperties
-@EntityScan(basePackages = {"cfm.SoisotaService.model"})
+@EntityScan(basePackages = {"cfm.SoisotaService.entities"})
 public class SoisotaServiceApplication implements CommandLineRunner {
-
+    @Autowired
     final UserService userService;
-
+    @Autowired
     final RoleService roleService;
 
     public static void main(String[] args) {
@@ -32,15 +33,15 @@ public class SoisotaServiceApplication implements CommandLineRunner {
 
     @Override
     public void run(String... params) throws Exception {
-		// Add role mặc định
-		if (roleService.getAllRole().isEmpty()) {
-			roleService.initRoleDefault();
-		}
+        // Add role mặc định
+        if (roleService.getAllRole().isEmpty()) {
+            roleService.initRoleDefault();
+        }
 
-		// Add User mặc định
-		if (userService.getAllUser().isEmpty()) {
-			userService.initUserDefault();
-		}
+        // Add User mặc định
+        if (userService.getAllUser().isEmpty()) {
+            userService.initUserDefault();
+        }
         //add comment
     }
 }

@@ -1,7 +1,7 @@
 package cfm.SoisotaService.security;
 
-import cfm.SoisotaService.model.AppUser;
-import cfm.SoisotaService.repository.UserRepository;
+import cfm.SoisotaService.entities.AppUser;
+import cfm.SoisotaService.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
