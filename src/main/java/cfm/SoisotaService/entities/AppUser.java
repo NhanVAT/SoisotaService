@@ -30,9 +30,6 @@ public class AppUser extends AbstractAuditingEntity implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "active", nullable = false)
-    private Boolean active;
-
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     @JoinTable(name = "app_user_roles",
             joinColumns = {

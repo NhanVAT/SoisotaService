@@ -1,12 +1,13 @@
 package cfm.SoisotaService.services;
 
 import cfm.SoisotaService.entities.AppUser;
+import cfm.SoisotaService.models.LoginUser;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface UserService {
-    String signin(String username, String password);
+    String signin(LoginUser loginUser);
 
     String signup(AppUser appUser);
 
