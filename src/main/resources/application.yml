@@ -20,8 +20,8 @@ spring:
     max-idle: 20
     min-idle: 15
   jpa:
-    hibernate:
-      ddl-auto: create
+    #hibernate:
+      #ddl-auto: create
       #ddl-auto: none
       #naming:
       #physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
@@ -41,8 +41,8 @@ server:
 security:
   jwt:
     token:
-      secret-key: secret-key
-      expire-length: 300000 # 5 minutes duration by default: 5 minutes * 60 seconds * 1000 miliseconds
+      secret-key: RVZOSUNUMTFDVUFCQUM=
+      expire-length: 86400000 # 5 minutes duration by default: 5 minutes * 60 seconds * 1000 miliseconds
 
 UserController:
   signin: Authenticates user and returns its JWT token.

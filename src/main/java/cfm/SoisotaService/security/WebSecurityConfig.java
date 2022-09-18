@@ -1,5 +1,6 @@
 package cfm.SoisotaService.security;
 
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -21,11 +25,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final JwtTokenProvider jwtTokenProvider;
 
+
   @Override
   protected void configure(HttpSecurity http) throws Exception {
 
     // Disable CSRF (cross site request forgery)
     http.csrf().disable();
+
+    //CORS
+    //    http.cors().and()
+    //        .addFilter(new BasicAuthenticationFilter(authenticationManager(), authErrorHandler()))
+    //        .formLogin().disable();
 
     // No session will be created or used by spring security
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -36,7 +46,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/users/signup").permitAll()//
         .antMatchers("/h2-console/**/**").permitAll()
         // Disallow everything else..
-        .anyRequest().authenticated();
+        //.anyRequest().authenticated();
+        // Enable everything else..
+        .anyRequest().permitAll();
 
     // If a user try to access a resource without having enough permissions
     http.exceptionHandling().accessDeniedPage("/login");
@@ -57,11 +69,35 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/configuration/**")//
         .antMatchers("/webjars/**")//
         .antMatchers("/public")
-        
+
         // Un-secure H2 Database (for testing purposes, H2 console shouldn't be unprotected in production)
         .and()
         .ignoring()
-        .antMatchers("/h2-console/**/**");;
+        .antMatchers("/h2-console/**/**");
+    ;
+  }
+
+  @Bean
+  public AuthenticationErrorHandler authErrorHandler() {
+    System.out.println("Configure auth Error");
+    AuthenticationErrorHandler authenticationErrorHandler = new AuthenticationErrorHandler();
+    authenticationErrorHandler.setRealmName("Basic Authentication");
+    return authenticationErrorHandler;
+  }
+
+  @Bean
+  CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+    configuration.setAllowedMethods(
+        Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS", "HEAD"));
+    configuration.setAllowCredentials(true);
+    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Requestor-Type"));
+    configuration.setExposedHeaders(Arrays.asList("X-Get-Header"));
+    configuration.setMaxAge(3600L);
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
   }
 
   @Bean

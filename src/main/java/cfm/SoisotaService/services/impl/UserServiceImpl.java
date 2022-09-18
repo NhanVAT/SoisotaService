@@ -92,6 +92,7 @@ public class UserServiceImpl implements UserService {
 
   public void initUserDefault() {
     AppUser admin = new AppUser();
+    admin.setUserId("admin");
     admin.setUserName("admin");
     admin.setPassword("admin");
     admin.setEmail("admin@email.com");
@@ -107,6 +108,7 @@ public class UserServiceImpl implements UserService {
     this.signup(admin);
 
     AppUser client = new AppUser();
+    client.setUserId("user");
     client.setUserName("user");
     client.setPassword("user");
     client.setEmail("user@email.com");
