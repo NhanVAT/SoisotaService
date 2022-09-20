@@ -4,10 +4,13 @@ import cfm.SoisotaService.entities.AppRole;
 import cfm.SoisotaService.entities.AppUser;
 import cfm.SoisotaService.exception.CustomException;
 import cfm.SoisotaService.models.LoginUser;
+import cfm.SoisotaService.models.RegisterRoleUser;
 import cfm.SoisotaService.repositories.UserRepository;
 import cfm.SoisotaService.security.JwtTokenProvider;
 import cfm.SoisotaService.services.RoleService;
 import cfm.SoisotaService.services.UserService;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -62,6 +65,41 @@ public class UserServiceImpl implements UserService {
     } else {
       throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
     }
+  }
+
+  public String register(RegisterRoleUser registerRoleUser) {
+
+    AppUser appUser = new AppUser();
+    appUser.setEmail(registerRoleUser.getEmail());
+    appUser.setPassword(registerRoleUser.getPassword());
+    String userName = appUser.getEmail().replace("@gmail.com","");
+    appUser.setUserId(userName);
+    appUser.setUserName(userName);
+
+    //check exist username
+    if (!userRepository.existsByUserName(appUser.getUserName())) {
+      //check password vs confirm password
+      if(registerRoleUser.getPassword().equalsIgnoreCase(registerRoleUser.getConfirmPassword())){
+        //check exist email
+        if(!userRepository.existsByEmail(appUser.getEmail())){
+          appUser.setActive(false);
+          appUser.setCreatedBy("user");
+          appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
+
+          AppRole appRole = roleService.findByRoleId("ROLE_USER");
+          Set<AppRole> roleSet = new HashSet<>();
+          roleSet.add(appRole);
+
+          appUser.setRoles(roleSet);
+
+          userRepository.save(appUser);
+          return appUser.getUserName();
+        }
+        throw new CustomException("Email is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+      }
+      throw new CustomException("Confirm password and password must be same ", HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+    throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
   }
 
   public void delete(String username) {
@@ -123,4 +161,6 @@ public class UserServiceImpl implements UserService {
 
     this.signup(client);
   }
+
+
 }

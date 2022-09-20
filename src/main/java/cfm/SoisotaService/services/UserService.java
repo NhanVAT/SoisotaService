@@ -2,6 +2,7 @@ package cfm.SoisotaService.services;
 
 import cfm.SoisotaService.entities.AppUser;
 import cfm.SoisotaService.models.LoginUser;
+import cfm.SoisotaService.models.RegisterRoleUser;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -22,4 +23,6 @@ public interface UserService {
     List<AppUser> getAllUser();
 
     void initUserDefault();
+
+    String register(RegisterRoleUser registerRoleUser) ;
 }

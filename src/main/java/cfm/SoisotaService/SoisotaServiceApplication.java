@@ -1,5 +1,6 @@
 package cfm.SoisotaService;
 
+import cfm.SoisotaService.entities.AppUser;
 import cfm.SoisotaService.services.MenuService;
 import cfm.SoisotaService.services.RoleService;
 import cfm.SoisotaService.services.UserService;
@@ -11,6 +12,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication

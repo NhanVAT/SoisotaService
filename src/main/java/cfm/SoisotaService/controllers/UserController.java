@@ -1,10 +1,12 @@
 package cfm.SoisotaService.controllers;
 
+import cfm.SoisotaService.dto.ResponseObjectDTO;
 import cfm.SoisotaService.dto.UserDataDTO;
 import cfm.SoisotaService.dto.UserResponseDTO;
 import cfm.SoisotaService.entities.AppUser;
 import cfm.SoisotaService.models.AuthToken;
 import cfm.SoisotaService.models.LoginUser;
+import cfm.SoisotaService.models.RegisterRoleUser;
 import cfm.SoisotaService.services.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,8 +15,11 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -99,6 +104,17 @@ public class UserController {
   @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
   public String refresh(HttpServletRequest req) {
     return userService.refresh(req.getRemoteUser());
+  }
+
+  @PostMapping("/register")
+  @ApiOperation(value = "${UserController.register}")
+  public ResponseEntity<ResponseObjectDTO> register(@Valid @RequestBody RegisterRoleUser registerRoleUser){
+
+    //AppUser appUser = modelMapper.map(registerRoleUser, AppUser.class);
+    String username = userService.register(registerRoleUser);
+    return ResponseEntity.status(HttpStatus.OK).body(
+            new ResponseObjectDTO(true, "Reigister New Account Success", username)
+    );
   }
 
 }
