@@ -2,30 +2,56 @@ package cfm.SoisotaService.models;
 
 import lombok.Data;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.*;
 
 
 @Data
 public class RegisterRoleUser {
-    @NotBlank(message = "First Name không được để trống")
+    public RegisterRoleUser(String firstName, String lastName, String email, String password, String confirmPassword, String acceptTerm, String address, String phone, String userName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
+        this.acceptTerm = acceptTerm;
+        this.address = address;
+        this.phone = phone;
+        this.userName = userName;
+        this.fullName = firstName + " " + lastName;
+        this.userId = userName;
+    }
+
+    //@NotEmpty(message = "First Name không được để trống")
     private String firstName;
 
-    @NotBlank(message = "Last Name không được để trống")
+//    @NotEmpty(message = "Last Name không được để trống")
 
     private String lastName;
 
-    @Email(message = "Email không hợp lệ")
+//    @Email(message = "Email không hợp lệ")
     private String email;
 
-    @NotBlank(message = "Password không được để trống")
-    @Min(value = 8, message = "Password phải từ 8 kí tự trở lên")
+//    @NotEmpty(message = "Password không được để trống")
+//    @Min(value = 8, message = "Password phải từ 8 kí tự trở lên")
     private String password;
 
-    @NotBlank(message = "Confirm Password không được để trống")
+//    @NotEmpty(message = "Confirm Password không được để trống")
     private String confirmPassword;
 
-    @NotBlank(message = "Bạn cần đọc và chấp nhận quy định mới được đăng ký")
+//    @NotNull
+//    @AssertTrue
     private String acceptTerm;
+
+//    @NotEmpty
+    private String address;
+
+    //    @NotEmpty
+    private String phone;
+
+    private String fullName;
+
+    //    @NotEmpty
+    private String userName;
+
+    private String userId;
 }

@@ -10,13 +10,13 @@ import cfm.SoisotaService.security.JwtTokenProvider;
 import cfm.SoisotaService.services.RoleService;
 import cfm.SoisotaService.services.UserService;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -40,6 +40,8 @@ public class UserServiceImpl implements UserService {
   private final AuthenticationManager authenticationManager;
   @Autowired
   private final RoleService roleService;
+//  @Autowired
+//  private final ModelMapper modelMapper;
 
   public String signin(LoginUser loginUser) {
     try {
@@ -67,25 +69,19 @@ public class UserServiceImpl implements UserService {
     }
   }
 
-  public String register(RegisterRoleUser registerRoleUser) {
-
-    AppUser appUser = new AppUser();
-    appUser.setEmail(registerRoleUser.getEmail());
-    appUser.setPassword(registerRoleUser.getPassword());
-    String userName = appUser.getEmail().replace("@gmail.com","");
-    appUser.setUserId(userName);
-    appUser.setUserName(userName);
+  public String register(AppUser appUser, RegisterRoleUser registerRoleUser) {
 
     //check exist username
     if (!userRepository.existsByUserName(appUser.getUserName())) {
+      //check exist email
+      if(!userRepository.existsByEmail(appUser.getEmail())){
       //check password vs confirm password
-      if(registerRoleUser.getPassword().equalsIgnoreCase(registerRoleUser.getConfirmPassword())){
-        //check exist email
-        if(!userRepository.existsByEmail(appUser.getEmail())){
+      if(appUser.getPassword().equalsIgnoreCase(registerRoleUser.getConfirmPassword())){
           appUser.setActive(false);
           appUser.setCreatedBy("user");
           appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
 
+          //set role: ROLE_USER
           AppRole appRole = roleService.findByRoleId("ROLE_USER");
           Set<AppRole> roleSet = new HashSet<>();
           roleSet.add(appRole);
@@ -95,9 +91,9 @@ public class UserServiceImpl implements UserService {
           userRepository.save(appUser);
           return appUser.getUserName();
         }
-        throw new CustomException("Email is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+          throw new CustomException("Confirm password and password must be same ", HttpStatus.UNPROCESSABLE_ENTITY);
       }
-      throw new CustomException("Confirm password and password must be same ", HttpStatus.UNPROCESSABLE_ENTITY);
+        throw new CustomException("Email is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
     }
     throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
   }
