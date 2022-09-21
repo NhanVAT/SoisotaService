@@ -8,6 +8,7 @@ import cfm.SoisotaService.services.RoleService;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,25 +24,29 @@ public class RoleServiceImpl implements RoleService {
   private final MenuService menuService;
 
   public List<AppRole> getAllRole() {
-    return roleRepository.findAll();
+    List<AppRole> result = roleRepository.findAll();
+
+    return result;
   }
 
   public AppRole findByRoleId(String name) {
     return roleRepository.findByRoleId(name);
   }
 
+  @Transactional
   public void initRoleDefault() {
+    List<AppMenu> lstAllAppMenu = menuService.getAllMenu();
+
     AppRole role_1 = new AppRole();
     role_1.setRoleId("ROLE_ADMIN");
     role_1.setRoleName("Quản trị viên");
     role_1.setCreatedBy("admin");
     role_1.setActive(true);
 
-    AppMenu appMenu_1 = menuService.findById("1");
-    Set<AppMenu> appMenus_1 = new HashSet<>();
-    appMenus_1.add(appMenu_1);
+    Set<AppMenu> setAppMenus = new HashSet<>();
+    setAppMenus.addAll(lstAllAppMenu);
 
-    role_1.setMenus(appMenus_1);
+    role_1.setMenus(setAppMenus);
 
     roleRepository.save(role_1);
 
@@ -51,11 +56,7 @@ public class RoleServiceImpl implements RoleService {
     role_2.setCreatedBy("admin");
     role_2.setActive(true);
 
-    AppMenu appMenu_2 = menuService.findById("2");
-    Set<AppMenu> appMenus_2 = new HashSet<>();
-    appMenus_2.add(appMenu_2);
-
-    role_2.setMenus(appMenus_2);
+    role_2.setMenus(setAppMenus);
 
     roleRepository.save(role_2);
   }

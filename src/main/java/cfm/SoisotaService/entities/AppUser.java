@@ -39,17 +39,22 @@ public class AppUser extends AbstractAuditingEntity implements Serializable {
   @Column(name = "email", unique = true, nullable = false)
   private String email;
 
+  @Column(name = "phone")
+  private String phone;
+
+  @Column(name = "fullName")
+  private String fullName;
+
+  @Column(name = "address")
+  private String address;
+
   @Size(min = 8, message = "Minimum password length: 8 characters")
   @Column(name = "password")
   private String password;
 
   @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
-  @JoinTable(name = "app_user_roles",
-      joinColumns = {
-          @JoinColumn(name = "user_id")
-      },
-      inverseJoinColumns = {
-          @JoinColumn(name = "role_id")})
+  @JoinTable(name = "app_user_roles", joinColumns = {
+      @JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "role_id")})
   private Set<AppRole> roles;
 
 }
