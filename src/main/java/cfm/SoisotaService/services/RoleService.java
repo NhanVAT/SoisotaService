@@ -1,5 +1,7 @@
 package cfm.SoisotaService.services;
 
+import cfm.SoisotaService.dto.ResponseObjectDTO;
+import cfm.SoisotaService.dto.RoleDataDTO;
 import cfm.SoisotaService.entities.AppRole;
 import java.util.List;
 
@@ -10,4 +12,12 @@ public interface RoleService {
   AppRole findByRoleId(String name);
 
   void initRoleDefault();
+
+  ResponseObjectDTO insertAppRole(RoleDataDTO roleDataDTO);
+
+  ResponseObjectDTO updateAppRole(RoleDataDTO roleDataDTO);
+
+  ResponseObjectDTO deleteAppRole(Long idRole);
+
+  ResponseObjectDTO deleteListAppRole(List<Long> lstIdRole);
 }

@@ -32,11 +32,6 @@ public class SoisotaServiceApplication implements CommandLineRunner {
     SpringApplication.run(SoisotaServiceApplication.class, args);
   }
 
-  @Bean
-  public ModelMapper modelMapper() {
-    return new ModelMapper();
-  }
-
   @Override
   public void run(String... params) throws Exception {
     // Add menu mặc định

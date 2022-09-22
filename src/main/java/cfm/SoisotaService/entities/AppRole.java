@@ -32,9 +32,16 @@ public class AppRole extends AbstractAuditingEntity implements Serializable {
   @Column(name = "role_id", nullable = false)
   private String roleId;
 
+  @Size(min = 1, max = 20, message = "Max id role length: 20 characters")
+  @Column(name = "role_key", nullable = false)
+  private String roleKey;
+
   @Size(min = 1, max = 50, message = "Max name role length: 50 characters")
   @Column(name = "role_name", nullable = false)
   private String roleName;
+
+  @Column(name = "role_describe")
+  private String roleDescribe;
 
   @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
   @JoinTable(name = "app_role_menus",

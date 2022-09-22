@@ -8,15 +8,21 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class RoleDataDTO {
+public class MenuDataDTO {
 
   private Long id;
-  private String roleId;
-  private String roleKey;
-  private String roleName;
-  private String roleDescribe;
-  private List<MenuDataDTO> menus;
-  private List<Long> lstMenuId;
+  private Long key;
+  private String menuId;
+  private Long menuParent;
+  private Long menuOrder;
+  private String menuName;
+  private String menuPrjName;
+  private String menuIcon;
+  private String menuTarget;
+  private String menuUrl;
+  private String menuRouterLink;
+  private String menuBadge;
+  private String menuBadgeClass;
   private Boolean active;
   private String createdBy;
   private Instant createdDate;

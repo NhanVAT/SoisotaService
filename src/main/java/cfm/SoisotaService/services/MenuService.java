@@ -9,5 +9,7 @@ public interface MenuService {
 
   AppMenu findById(String name);
 
+  List<AppMenu> getListAppMenuByListId(List<Long> lstId);
+
   void initMenuDefault();
 }

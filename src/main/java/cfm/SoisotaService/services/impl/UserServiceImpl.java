@@ -129,6 +129,9 @@ public class UserServiceImpl implements UserService {
   }
 
   public void initUserDefault() {
+
+
+
     AppUser admin = new AppUser();
     admin.setUserId("admin");
     admin.setUserName("admin");

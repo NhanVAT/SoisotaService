@@ -26,6 +26,10 @@ public class MenuServiceImpl implements MenuService {
     return menuRepository.findById(Long.parseLong(id)).get();
   }
 
+  public List<AppMenu> getListAppMenuByListId(List<Long> lstId) {
+    return menuRepository.findListAppMenuByListId(lstId);
+  }
+
   @Transactional
   public void initMenuDefault() {
     //Tạo menu Cha
