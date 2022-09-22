@@ -24,5 +24,5 @@ public interface UserService {
 
     void initUserDefault();
 
-    String register(RegisterRoleUser registerRoleUser) ;
+    String register(AppUser appUser, RegisterRoleUser registerRoleUser) ;
 }

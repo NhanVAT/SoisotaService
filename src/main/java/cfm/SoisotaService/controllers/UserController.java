@@ -19,6 +19,7 @@ import javax.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -108,10 +109,13 @@ public class UserController {
 
   @PostMapping("/register")
   @ApiOperation(value = "${UserController.register}")
-  public ResponseEntity<ResponseObjectDTO> register(@Valid @RequestBody RegisterRoleUser registerRoleUser){
+  public ResponseEntity<ResponseObjectDTO> register(@RequestBody RegisterRoleUser registerRoleUser){
+    ModelMapper modelMapper = new ModelMapper();
+    modelMapper.getConfiguration()
+            .setMatchingStrategy(MatchingStrategies.STRICT);
 
-    //AppUser appUser = modelMapper.map(registerRoleUser, AppUser.class);
-    String username = userService.register(registerRoleUser);
+    AppUser appUser = modelMapper.map(registerRoleUser, AppUser.class);
+    String username = userService.register(appUser, registerRoleUser);
     return ResponseEntity.status(HttpStatus.OK).body(
             new ResponseObjectDTO(true, "Reigister New Account Success", username)
     );
