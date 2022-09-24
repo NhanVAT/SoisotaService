@@ -192,4 +192,9 @@ public class UserServiceImpl implements UserService {
     }
     throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
   }
+
+  public ResponseObjectDTO deleteListAppUser(List<Long> lstIdUser){
+    userRepository.deleteAllById(lstIdUser);
+    return new ResponseObjectDTO(true, "Xoá list người dùng thành công", null);
+  }
 }

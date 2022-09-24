@@ -30,4 +30,6 @@ public interface UserService {
 
     ResponseObjectDTO insertAppUser(UserDataDTO userDataDTO);
     ResponseObjectDTO updateAppUser(UserDataDTO userDataDTO);
+
+    ResponseObjectDTO deleteListAppUser(List<Long> lstIdUser);
 }

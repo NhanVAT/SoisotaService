@@ -175,6 +175,17 @@ public class QuanTriHeThongController {
       return username;
   }
 
-
-
+  @PostMapping(value = "/deleteListAppUser")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @ApiOperation(value = "Delete list AppUser", response = ResponseEntity.class, authorizations = {
+          @Authorization(value = "apiKey")})
+  @ApiResponses(value = {//
+          @ApiResponse(code = 400, message = "Something went wrong"), //
+          @ApiResponse(code = 403, message = "Access denied"), //
+          @ApiResponse(code = 404, message = "The role doesn't exist"), //
+          @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+  public ResponseEntity<ResponseObjectDTO> deleteListAppUser(
+          @Valid @RequestBody List<Long> lstIdUser) {
+    return ResponseEntity.status(HttpStatus.OK).body(userService.deleteListAppUser(lstIdUser));
+  }
 }
