@@ -170,9 +170,9 @@ public class UserServiceImpl implements UserService {
 
 
   public ResponseObjectDTO updateAppUser(UserDataDTO userDataDTO) {
-    AppUser appUser = userRepository.findById(userDataDTO.getId()).orElseThrow(() -> {
-      throw new CustomException("The user doesn't exist", HttpStatus.NOT_FOUND);
-    });
+    AppUser appUser = userRepository.findById(userDataDTO.getId()).orElseThrow(() ->
+      new CustomException("The user doesn't exist", HttpStatus.NOT_FOUND)
+    );
 
     modelMapper.map(userDataDTO, appUser);
     userRepository.save(appUser);
