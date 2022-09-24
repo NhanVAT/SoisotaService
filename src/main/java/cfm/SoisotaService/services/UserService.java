@@ -1,5 +1,7 @@
 package cfm.SoisotaService.services;
 
+import cfm.SoisotaService.dto.ResponseObjectDTO;
+import cfm.SoisotaService.dto.UserDataDTO;
 import cfm.SoisotaService.entities.AppUser;
 import cfm.SoisotaService.models.LoginUser;
 import cfm.SoisotaService.models.RegisterRoleUser;
@@ -25,4 +27,7 @@ public interface UserService {
     void initUserDefault();
 
     String register(AppUser appUser, RegisterRoleUser registerRoleUser) ;
+
+    ResponseObjectDTO insertAppUser(UserDataDTO userDataDTO);
+    ResponseObjectDTO updateAppUser(UserDataDTO userDataDTO);
 }

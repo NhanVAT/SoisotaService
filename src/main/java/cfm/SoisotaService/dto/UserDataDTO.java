@@ -31,5 +31,13 @@ public class UserDataDTO {
   private String lastModifiedBy;
   @ApiModelProperty(position = 8)
   private Instant lastModifiedDate;
+  @ApiModelProperty(position = 11)
+  private String fullName;
+  @ApiModelProperty(position = 12)
+  private String address;
+  @ApiModelProperty(position = 13)
+  private String phone;
+  @ApiModelProperty(position = 13)
+  private Long id;
 
 }

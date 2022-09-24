@@ -1,5 +1,8 @@
 package cfm.SoisotaService.services.impl;
 
+import cfm.SoisotaService.dto.ResponseObjectDTO;
+import cfm.SoisotaService.dto.UserDataDTO;
+import cfm.SoisotaService.entities.AppMenu;
 import cfm.SoisotaService.entities.AppRole;
 import cfm.SoisotaService.entities.AppUser;
 import cfm.SoisotaService.exception.CustomException;
@@ -7,6 +10,7 @@ import cfm.SoisotaService.models.LoginUser;
 import cfm.SoisotaService.models.RegisterRoleUser;
 import cfm.SoisotaService.repositories.UserRepository;
 import cfm.SoisotaService.security.JwtTokenProvider;
+import cfm.SoisotaService.services.MenuService;
 import cfm.SoisotaService.services.RoleService;
 import cfm.SoisotaService.services.UserService;
 
@@ -40,8 +44,11 @@ public class UserServiceImpl implements UserService {
   private final AuthenticationManager authenticationManager;
   @Autowired
   private final RoleService roleService;
-//  @Autowired
-//  private final ModelMapper modelMapper;
+
+  @Autowired
+  private final MenuService menuService;
+  @Autowired
+  private final ModelMapper modelMapper;
 
   public String signin(LoginUser loginUser) {
     try {
@@ -162,4 +169,27 @@ public class UserServiceImpl implements UserService {
   }
 
 
+  public ResponseObjectDTO updateAppUser(UserDataDTO userDataDTO) {
+    AppUser appUser = userRepository.findById(userDataDTO.getId()).orElseThrow(() -> {
+      throw new CustomException("The user doesn't exist", HttpStatus.NOT_FOUND);
+    });
+
+    modelMapper.map(userDataDTO, appUser);
+    userRepository.save(appUser);
+    return new ResponseObjectDTO(true, "Cập nhật người dùng thành công", null);
+  }
+
+  public ResponseObjectDTO insertAppUser(UserDataDTO userDataDTO) {
+    AppUser appUser = modelMapper.map(userDataDTO, AppUser.class);
+
+    if (!userRepository.existsByUserName(appUser.getUserName())) {
+      if (!userRepository.existsByEmail(appUser.getEmail())) {
+        appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
+        userRepository.save(appUser);
+        return new ResponseObjectDTO(true, "Thêm người dùng mới thành công", null);
+      }
+      throw new CustomException("Email is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+    throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+  }
 }

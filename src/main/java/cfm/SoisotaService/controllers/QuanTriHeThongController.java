@@ -5,7 +5,10 @@ import cfm.SoisotaService.dto.ResponseObjectDTO;
 import cfm.SoisotaService.dto.RoleDataDTO;
 import cfm.SoisotaService.models.RegisterRoleUser;
 import cfm.SoisotaService.services.MenuService;
+import cfm.SoisotaService.dto.UserDataDTO;
+import cfm.SoisotaService.entities.AppUser;
 import cfm.SoisotaService.services.RoleService;
+import cfm.SoisotaService.services.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -38,6 +42,8 @@ public class QuanTriHeThongController {
   private final ModelMapper modelMapper;
   private final RoleService roleService;
   private final MenuService menuService;
+
+  private final UserService userService;
 
   @GetMapping(value = "/getAllRole")
   @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -118,4 +124,57 @@ public class QuanTriHeThongController {
       @Valid @RequestBody List<Long> lstIdRole) {
     return ResponseEntity.status(HttpStatus.OK).body(roleService.deleteListAppRole(lstIdRole));
   }
+
+  @GetMapping("/getAllUser")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @ApiOperation(value = "Get All User", response = UserDataDTO.class, responseContainer = "List",
+          authorizations = {@Authorization(value = "apiKey")})
+  @ApiResponses(value = {//
+          @ApiResponse(code = 400, message = "Something went wrong"), //
+          @ApiResponse(code = 403, message = "Access denied"), //
+          @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+  public List<UserDataDTO> getAllUser(){
+      return userService.getAllUser().stream().map(user -> modelMapper.map(user, UserDataDTO.class))
+              .collect(Collectors.toList());
+  }
+
+  @PostMapping("/insertAppUser")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @ApiOperation(value = "Insert App User", response = ResponseEntity.class ,
+          authorizations = {@Authorization(value = "apiKey")})
+  @ApiResponses(value = {//
+          @ApiResponse(code = 400, message = "Something went wrong"), //
+          @ApiResponse(code = 403, message = "Access denied"), //
+          @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+  public ResponseEntity<ResponseObjectDTO>  insertAppUser(@RequestBody UserDataDTO userDataDTO){
+      return ResponseEntity.status(HttpStatus.OK).body(userService.insertAppUser(userDataDTO));
+  }
+
+  @PutMapping("/updateAppUser")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @ApiOperation(value = "Update App User", response = String.class, responseContainer = "String",
+          authorizations = {@Authorization(value = "apiKey")})
+  @ApiResponses(value = {//
+          @ApiResponse(code = 400, message = "Something went wrong"), //
+          @ApiResponse(code = 403, message = "Access denied"), //
+          @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+  public ResponseEntity<ResponseObjectDTO>  updateAppUser(@RequestBody UserDataDTO userDataDTO){
+      return ResponseEntity.status(HttpStatus.OK).body(userService.updateAppUser(userDataDTO));
+  }
+
+  @PostMapping("/deleteAppUser")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @ApiOperation(value = "Delete App User", response = String.class, responseContainer = "String",
+          authorizations = {@Authorization(value = "apiKey")})
+  @ApiResponses(value = {//
+          @ApiResponse(code = 400, message = "Something went wrong"), //
+          @ApiResponse(code = 403, message = "Access denied"), //
+          @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+  public String deleteAppUser(@RequestBody String username){
+      userService.delete(username);
+      return username;
+  }
+
+
+
 }
