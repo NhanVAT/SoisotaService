@@ -14,4 +14,5 @@ public interface MenuRepository extends JpaRepository<AppMenu, Long> {
   @Query("select appMenu from AppMenu appMenu where appMenu.id in :lstId")
   List<AppMenu> findListAppMenuByListId(@Param("lstId") List<Long> lstId);
 
+  List<AppMenu> findAllByMenuParent(Long id);
 }

@@ -95,18 +95,20 @@ public class RoleServiceImpl implements RoleService {
     //Lấy thanh niên cũ theo ID ra nào
     AppRole appRole = roleRepository.findById(roleDataDTO.getId()).get();
 
-    //Map thông tin AppRole và AppMenu ở đây luôn
-    modelMapper.map(roleDataDTO, appRole);
+    if (appRole != null) {
+      //Map thông tin AppRole và AppMenu ở đây luôn
+      modelMapper.map(roleDataDTO, appRole);
 
-    //Lấy thêm list menu theo list ID Menu để gán
-    List<AppMenu> appMenuList = menuService.getListAppMenuByListId(roleDataDTO.getLstMenuId());
+      //Lấy thêm list menu theo list ID Menu để gán
+      List<AppMenu> appMenuList = menuService.getListAppMenuByListId(roleDataDTO.getLstMenuId());
 
-    Set<AppMenu> setAppMenus = new HashSet<>();
-    setAppMenus.addAll(appMenuList);
+      Set<AppMenu> setAppMenus = new HashSet<>();
+      setAppMenus.addAll(appMenuList);
 
-    appRole.setMenus(setAppMenus);
+      appRole.setMenus(setAppMenus);
 
-    roleRepository.save(appRole);
+      roleRepository.save(appRole);
+    }
 
     return new ResponseObjectDTO(true, "Cập nhật role thành công", null);
   }

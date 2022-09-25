@@ -188,4 +188,58 @@ public class QuanTriHeThongController {
           @Valid @RequestBody List<Long> lstIdUser) {
     return ResponseEntity.status(HttpStatus.OK).body(userService.deleteListAppUser(lstIdUser));
   }
+
+  @PostMapping("/insertAppMenu")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @ApiOperation(value = "Insert AppMenu", response = ResponseEntity.class, authorizations = {
+      @Authorization(value = "apiKey")})
+  @ApiResponses(value = {//
+      @ApiResponse(code = 400, message = "Something went wrong"), //
+      @ApiResponse(code = 403, message = "Access denied"), //
+      @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+  public ResponseEntity<ResponseObjectDTO> insertAppMenu(
+      @Valid @RequestBody MenuDataDTO menuDataDTO) {
+    return ResponseEntity.status(HttpStatus.OK).body(menuService.insertAppMenu(menuDataDTO));
+  }
+
+  @PutMapping("/updateAppMenu")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @ApiOperation(value = "Update AppMenu", response = ResponseEntity.class, authorizations = {
+      @Authorization(value = "apiKey")})
+  @ApiResponses(value = {//
+      @ApiResponse(code = 400, message = "Something went wrong"), //
+      @ApiResponse(code = 403, message = "Access denied"), //
+      @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+  public ResponseEntity<ResponseObjectDTO> updateAppMenu(
+      @Valid @RequestBody MenuDataDTO menuDataDTO) {
+    return ResponseEntity.status(HttpStatus.OK).body(menuService.updateAppMenu(menuDataDTO));
+  }
+
+  @PostMapping(value = "/deleteAppMenu")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @ApiOperation(value = "Delete AppMenu", response = ResponseEntity.class, authorizations = {
+      @Authorization(value = "apiKey")})
+  @ApiResponses(value = {//
+      @ApiResponse(code = 400, message = "Something went wrong"), //
+      @ApiResponse(code = 403, message = "Access denied"), //
+      @ApiResponse(code = 404, message = "The role doesn't exist"), //
+      @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+  public ResponseEntity<ResponseObjectDTO> deleteAppMenu(
+      @Valid @RequestBody Long idMenu) {
+    return ResponseEntity.status(HttpStatus.OK).body(menuService.deleteAppMenu(idMenu));
+  }
+
+  @PostMapping(value = "/deleteListAppMenu")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @ApiOperation(value = "Delete list AppMenu", response = ResponseEntity.class, authorizations = {
+      @Authorization(value = "apiKey")})
+  @ApiResponses(value = {//
+      @ApiResponse(code = 400, message = "Something went wrong"), //
+      @ApiResponse(code = 403, message = "Access denied"), //
+      @ApiResponse(code = 404, message = "The role doesn't exist"), //
+      @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+  public ResponseEntity<ResponseObjectDTO> deleteListAppMenu(
+      @Valid @RequestBody List<Long> lstIdMenu) {
+    return ResponseEntity.status(HttpStatus.OK).body(menuService.deleteListAppMenu(lstIdMenu));
+  }
 }
