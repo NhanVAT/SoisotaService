@@ -8,6 +8,7 @@ import cfm.SoisotaService.entities.AppUser;
 import cfm.SoisotaService.exception.CustomException;
 import cfm.SoisotaService.models.LoginUser;
 import cfm.SoisotaService.models.RegisterRoleUser;
+import cfm.SoisotaService.repositories.RoleRepository;
 import cfm.SoisotaService.repositories.UserRepository;
 import cfm.SoisotaService.security.JwtTokenProvider;
 import cfm.SoisotaService.services.MenuService;
@@ -50,6 +51,9 @@ public class UserServiceImpl implements UserService {
   @Autowired
   private final ModelMapper modelMapper;
 
+  @Autowired
+  private final RoleRepository roleRepository;
+
   public String signin(LoginUser loginUser) {
     try {
       authenticationManager.authenticate(
@@ -89,7 +93,7 @@ public class UserServiceImpl implements UserService {
           appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
 
           //set role: ROLE_USER
-          AppRole appRole = roleService.findByRoleId("ROLE_USER");
+          AppRole appRole = roleRepository.findByRoleKey("ROLE_USER");
           Set<AppRole> roleSet = new HashSet<>();
           roleSet.add(appRole);
 
