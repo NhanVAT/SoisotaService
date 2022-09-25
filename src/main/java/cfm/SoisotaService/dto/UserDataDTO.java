@@ -37,7 +37,9 @@ public class UserDataDTO {
   private String address;
   @ApiModelProperty(position = 13)
   private String phone;
-  @ApiModelProperty(position = 13)
+  @ApiModelProperty(position = 14)
   private Long id;
+  @ApiModelProperty(position = 15)
+  private String confirmPassword;
 
 }

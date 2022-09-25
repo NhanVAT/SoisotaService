@@ -173,8 +173,24 @@ public class UserServiceImpl implements UserService {
     AppUser appUser = userRepository.findById(userDataDTO.getId()).orElseThrow(() ->
       new CustomException("The user doesn't exist", HttpStatus.NOT_FOUND)
     );
-
     modelMapper.map(userDataDTO, appUser);
+
+    if(userRepository.existsByUserNameAndIdIsNotLike(appUser.getUserName(), appUser.getId())){
+      throw new CustomException("Username already exist", HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    if(userRepository.existsByEmailAndIdIsNot(appUser.getEmail(), appUser.getId())){
+      throw new CustomException("Email already exist", HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    if(userRepository.existsByPhoneAndIdIsNot(appUser.getPhone(), appUser.getId())){
+      throw new CustomException("Phone already exist", HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    if(!appUser.getPassword().equalsIgnoreCase(userDataDTO.getConfirmPassword())){
+      throw new CustomException("Confirm password and password must be same", HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
     userRepository.save(appUser);
     return new ResponseObjectDTO(true, "Cập nhật người dùng thành công", null);
   }
@@ -184,9 +200,15 @@ public class UserServiceImpl implements UserService {
 
     if (!userRepository.existsByUserName(appUser.getUserName())) {
       if (!userRepository.existsByEmail(appUser.getEmail())) {
-        appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
-        userRepository.save(appUser);
-        return new ResponseObjectDTO(true, "Thêm người dùng mới thành công", null);
+        if(!userRepository.existsByPhone(appUser.getPhone())){
+          if(appUser.getPassword().equalsIgnoreCase(userDataDTO.getConfirmPassword())){
+            appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
+            userRepository.save(appUser);
+            return new ResponseObjectDTO(true, "Thêm người dùng mới thành công", null);
+          }
+          throw new CustomException("Confirm password and password must be same", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        throw new CustomException("Phone is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
       }
       throw new CustomException("Email is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
     }
