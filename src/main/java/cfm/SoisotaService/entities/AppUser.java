@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "app_users")
+@Table(name = "app_user")
 public class AppUser extends AbstractAuditingEntity implements Serializable {
 
   @Id
@@ -47,6 +47,12 @@ public class AppUser extends AbstractAuditingEntity implements Serializable {
 
   @Column(name = "address")
   private String address;
+
+  @Column(name = "prestige_points")
+  private Integer prestigePoints;
+
+  @Column(name = "avatar_image")
+  private byte[] avatarImage;
 
   @Size(min = 8, message = "Minimum password length: 8 characters")
   @Column(name = "password")

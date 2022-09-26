@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "app_roles")
+@Table(name = "app_role")
 public class AppRole extends AbstractAuditingEntity implements Serializable {
 
   @Id
