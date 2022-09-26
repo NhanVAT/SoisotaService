@@ -15,4 +15,6 @@ public interface RoleRepository extends JpaRepository<AppRole, Long> {
     @Transactional
     void deleteByRoleId(String roleid);
 
+    AppRole findByRoleKey(String roleKey);
+
 }
