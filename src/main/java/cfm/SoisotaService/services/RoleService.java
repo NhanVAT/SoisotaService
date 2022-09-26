@@ -11,6 +11,8 @@ public interface RoleService {
 
   AppRole findByRoleId(String name);
 
+  AppRole getByRoleKey(String roleKey);
+
   void initRoleDefault();
 
   ResponseObjectDTO insertAppRole(RoleDataDTO roleDataDTO);
@@ -20,4 +22,6 @@ public interface RoleService {
   ResponseObjectDTO deleteAppRole(Long idRole);
 
   ResponseObjectDTO deleteListAppRole(List<Long> lstIdRole);
+
+  List<AppRole> getListAppRoleByListId(List<Long>  lstAppRoleId);
 }

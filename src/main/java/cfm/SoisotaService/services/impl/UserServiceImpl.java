@@ -15,6 +15,7 @@ import cfm.SoisotaService.services.MenuService;
 import cfm.SoisotaService.services.RoleService;
 import cfm.SoisotaService.services.UserService;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,9 +52,6 @@ public class UserServiceImpl implements UserService {
   @Autowired
   private final ModelMapper modelMapper;
 
-  @Autowired
-  private final RoleRepository roleRepository;
-
   public String signin(LoginUser loginUser) {
     try {
       authenticationManager.authenticate(
@@ -84,29 +82,30 @@ public class UserServiceImpl implements UserService {
 
     //check exist username
     if (!userRepository.existsByUserName(appUser.getUserName())) {
-      //check exist email
-      if(!userRepository.existsByEmail(appUser.getEmail())){
-      //check password vs confirm password
-      if(appUser.getPassword().equalsIgnoreCase(registerRoleUser.getConfirmPassword())){
-          appUser.setActive(false);
-          appUser.setCreatedBy("user");
-          appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
-
-          //set role: ROLE_USER
-          AppRole appRole = roleRepository.findByRoleKey("ROLE_USER");
-          Set<AppRole> roleSet = new HashSet<>();
-          roleSet.add(appRole);
-
-          appUser.setRoles(roleSet);
-
-          userRepository.save(appUser);
-          return appUser.getUserName();
-        }
-          throw new CustomException("Confirm password and password must be same ", HttpStatus.UNPROCESSABLE_ENTITY);
-      }
-        throw new CustomException("Email is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+      throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
     }
-    throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+    //check exist email
+    if(!userRepository.existsByEmail(appUser.getEmail())){
+      throw new CustomException("Email is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+    //check password vs confirm password
+    if(appUser.getPassword().equalsIgnoreCase(registerRoleUser.getConfirmPassword())){
+      throw new CustomException("Confirm password and password must be same ", HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    appUser.setActive(false);
+    appUser.setCreatedBy("user");
+    appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
+
+    //set role: ROLE_USER
+    AppRole appRole = roleService.getByRoleKey("ROLE_USER");
+    Set<AppRole> roleSet = new HashSet<>();
+    roleSet.add(appRole);
+
+    appUser.setRoles(roleSet);
+
+    userRepository.save(appUser);
+    return appUser.getUserName();
   }
 
   public void delete(String username) {
@@ -194,6 +193,13 @@ public class UserServiceImpl implements UserService {
     if(!appUser.getPassword().equalsIgnoreCase(userDataDTO.getConfirmPassword())){
       throw new CustomException("Confirm password and password must be same", HttpStatus.UNPROCESSABLE_ENTITY);
     }
+    appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
+    List<AppRole> list = roleService.getListAppRoleByListId(userDataDTO.getLstRoleId());
+
+    Set<AppRole> roleSet = new HashSet<>();
+    roleSet.addAll(list);
+
+    appUser.setRoles(roleSet);
 
     userRepository.save(appUser);
     return new ResponseObjectDTO(true, "Cập nhật người dùng thành công", null);
@@ -202,25 +208,34 @@ public class UserServiceImpl implements UserService {
   public ResponseObjectDTO insertAppUser(UserDataDTO userDataDTO) {
     AppUser appUser = modelMapper.map(userDataDTO, AppUser.class);
 
-    if (!userRepository.existsByUserName(appUser.getUserName())) {
-      if (!userRepository.existsByEmail(appUser.getEmail())) {
-        if(!userRepository.existsByPhone(appUser.getPhone())){
-          if(appUser.getPassword().equalsIgnoreCase(userDataDTO.getConfirmPassword())){
-            appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
-            userRepository.save(appUser);
-            return new ResponseObjectDTO(true, "Thêm người dùng mới thành công", null);
-          }
-          throw new CustomException("Confirm password and password must be same", HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-        throw new CustomException("Phone is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
-      }
+    if (userRepository.existsByUserName(appUser.getUserName())) {
+      throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+    if (userRepository.existsByEmail(appUser.getEmail())) {
       throw new CustomException("Email is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
     }
-    throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
-  }
+    if(userRepository.existsByPhone(appUser.getPhone())){
+     throw new CustomException("Phone is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+    if(!appUser.getPassword().equalsIgnoreCase(userDataDTO.getConfirmPassword())){
+      throw new CustomException("Confirm password and password must be same", HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 
+    appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
+
+    List<AppRole> list = roleService.getListAppRoleByListId(userDataDTO.getLstRoleId());
+
+    Set<AppRole> roleSet = new HashSet<>();
+    roleSet.addAll(list);
+
+    appUser.setRoles(roleSet);
+
+    userRepository.save(appUser);
+    return new ResponseObjectDTO(true, "Thêm người dùng mới thành công", null);
+  }
   public ResponseObjectDTO deleteListAppUser(List<Long> lstIdUser){
     userRepository.deleteAllById(lstIdUser);
     return new ResponseObjectDTO(true, "Xoá list người dùng thành công", null);
   }
+
 }

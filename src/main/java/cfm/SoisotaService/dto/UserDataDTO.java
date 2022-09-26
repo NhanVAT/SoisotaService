@@ -41,5 +41,6 @@ public class UserDataDTO {
   private Long id;
   @ApiModelProperty(position = 15)
   private String confirmPassword;
-
+  @ApiModelProperty(position = 16)
+  private List<Long> lstRoleId;
 }

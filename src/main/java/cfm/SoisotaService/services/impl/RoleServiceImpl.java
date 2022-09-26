@@ -40,6 +40,10 @@ public class RoleServiceImpl implements RoleService {
     return roleRepository.findByRoleId(name);
   }
 
+  public AppRole getByRoleKey(String roleKey) {
+    return roleRepository.findByRoleKey(roleKey);
+  }
+
   @Transactional
   public void initRoleDefault() {
     List<AppMenu> lstAllAppMenu = menuService.getAllMenu();
@@ -127,6 +131,11 @@ public class RoleServiceImpl implements RoleService {
     roleRepository.deleteAllById(lstIdRole);
 
     return new ResponseObjectDTO(true, "Xóa list role thành công", null);
+  }
+
+  @Transactional
+  public List<AppRole> getListAppRoleByListId(List<Long> lstAppRoleId) {
+    return roleRepository.findListAppRoleByListId(lstAppRoleId);
   }
 
 }

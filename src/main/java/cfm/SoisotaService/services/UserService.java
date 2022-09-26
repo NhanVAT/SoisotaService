@@ -29,7 +29,9 @@ public interface UserService {
     String register(AppUser appUser, RegisterRoleUser registerRoleUser) ;
 
     ResponseObjectDTO insertAppUser(UserDataDTO userDataDTO);
+
     ResponseObjectDTO updateAppUser(UserDataDTO userDataDTO);
 
     ResponseObjectDTO deleteListAppUser(List<Long> lstIdUser);
+
 }
