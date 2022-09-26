@@ -81,16 +81,20 @@ public class UserServiceImpl implements UserService {
   public String register(AppUser appUser, RegisterRoleUser registerRoleUser) {
 
     //check exist username
-    if (!userRepository.existsByUserName(appUser.getUserName())) {
+    if (userRepository.existsByUserName(appUser.getUserName())) {
       throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
     }
     //check exist email
-    if(!userRepository.existsByEmail(appUser.getEmail())){
+    if(userRepository.existsByEmail(appUser.getEmail())){
       throw new CustomException("Email is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
     }
     //check password vs confirm password
-    if(appUser.getPassword().equalsIgnoreCase(registerRoleUser.getConfirmPassword())){
+    if(!appUser.getPassword().equalsIgnoreCase(registerRoleUser.getConfirmPassword())){
       throw new CustomException("Confirm password and password must be same ", HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    if(!registerRoleUser.isAcceptTerm()){
+      throw new CustomException("You need accept term before register ", HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     appUser.setActive(false);

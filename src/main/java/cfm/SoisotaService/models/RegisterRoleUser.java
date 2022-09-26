@@ -7,7 +7,7 @@ import javax.validation.constraints.*;
 
 @Data
 public class RegisterRoleUser {
-    public RegisterRoleUser(String firstName, String lastName, String email, String password, String confirmPassword, String acceptTerm, String address, String phone, String userName) {
+    public RegisterRoleUser(String firstName, String lastName, String email, String password, String confirmPassword, boolean acceptTerm, String address, String phone, String userName) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -40,7 +40,7 @@ public class RegisterRoleUser {
 
 //    @NotNull
 //    @AssertTrue
-    private String acceptTerm;
+    private boolean acceptTerm;
 
 //    @NotEmpty
     private String address;
