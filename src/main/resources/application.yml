@@ -8,7 +8,9 @@ spring:
     # url: jdbc:mysql://localhost:3306/user_db
     # url: jdbc:mariadb://localhost:3307/soisota?useLegacyDatetimeCode=false&serverTimezone=UTC
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mariadb://25.7.200.76:3307/soingu?useLegacyDatetimeCode=false&serverTimezone=UTC
+    # url: jdbc:mariadb://25.7.200.76:3307/soingu?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #url: jdbc:mariadb://localhost:3307/soingu?useLegacyDatetimeCode=false&serverTimezone=UTC
+    url: jdbc:mariadb://localhost:3307/s_bill?useLegacyDatetimeCode=false&serverTimezone=UTC
     username: root
     password: cmis1234
   #  h2:
