@@ -1,11 +1,17 @@
 package cfm.SoisotaService.entities;
 
 import java.io.Serializable;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,5 +44,10 @@ public class AppTransaction extends AbstractAuditingEntity implements Serializab
 
   @Column(name = "transaction_describe")
   private String transactionDescribe;
+
+  @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+  @JoinTable(name = "app_transaction_images", joinColumns = {
+      @JoinColumn(name = "transaction_id")}, inverseJoinColumns = {@JoinColumn(name = "image_id")})
+  private Set<AppImage> images;
 }
 
