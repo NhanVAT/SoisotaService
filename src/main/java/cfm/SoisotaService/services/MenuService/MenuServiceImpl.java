@@ -1,10 +1,9 @@
-package cfm.SoisotaService.services.impl;
+package cfm.SoisotaService.services.MenuService;
 
 import cfm.SoisotaService.dto.MenuDataDTO;
 import cfm.SoisotaService.dto.ResponseObjectDTO;
 import cfm.SoisotaService.entities.AppMenu;
 import cfm.SoisotaService.repositories.MenuRepository;
-import cfm.SoisotaService.services.MenuService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -12,18 +11,14 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service(value = "menuService")
 @RequiredArgsConstructor
 public class MenuServiceImpl implements MenuService {
 
-  @Autowired
-  private final MenuRepository menuRepository;
-
-  @Autowired
   private final ModelMapper modelMapper;
+  private final MenuRepository menuRepository;
 
   @Override
   public List<AppMenu> getAllMenu() {

@@ -1,21 +1,16 @@
-package cfm.SoisotaService.services.impl;
+package cfm.SoisotaService.services.UserService;
 
 import cfm.SoisotaService.dto.ResponseObjectDTO;
 import cfm.SoisotaService.dto.UserDataDTO;
-import cfm.SoisotaService.entities.AppMenu;
 import cfm.SoisotaService.entities.AppRole;
 import cfm.SoisotaService.entities.AppUser;
 import cfm.SoisotaService.exception.CustomException;
 import cfm.SoisotaService.models.LoginUser;
 import cfm.SoisotaService.models.RegisterRoleUser;
-import cfm.SoisotaService.repositories.RoleRepository;
 import cfm.SoisotaService.repositories.UserRepository;
 import cfm.SoisotaService.security.JwtTokenProvider;
-import cfm.SoisotaService.services.MenuService;
-import cfm.SoisotaService.services.RoleService;
-import cfm.SoisotaService.services.UserService;
-
-import java.util.HashMap;
+import cfm.SoisotaService.services.MenuService.MenuService;
+import cfm.SoisotaService.services.RoleService.RoleService;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -85,16 +80,18 @@ public class UserServiceImpl implements UserService {
       throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
     }
     //check exist email
-    if(userRepository.existsByEmail(appUser.getEmail())){
+    if (userRepository.existsByEmail(appUser.getEmail())) {
       throw new CustomException("Email is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
     }
     //check password vs confirm password
-    if(!appUser.getPassword().equalsIgnoreCase(registerRoleUser.getConfirmPassword())){
-      throw new CustomException("Confirm password and password must be same ", HttpStatus.UNPROCESSABLE_ENTITY);
+    if (!appUser.getPassword().equalsIgnoreCase(registerRoleUser.getConfirmPassword())) {
+      throw new CustomException("Confirm password and password must be same ",
+          HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    if(!registerRoleUser.isAcceptTerm()){
-      throw new CustomException("You need accept term before register ", HttpStatus.UNPROCESSABLE_ENTITY);
+    if (!registerRoleUser.isAcceptTerm()) {
+      throw new CustomException("You need accept term before register ",
+          HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     appUser.setActive(false);
@@ -140,13 +137,14 @@ public class UserServiceImpl implements UserService {
 
   public void initUserDefault() {
 
-
-
     AppUser admin = new AppUser();
     admin.setUserId("admin");
     admin.setUserName("admin");
     admin.setPassword("admin");
     admin.setEmail("admin@email.com");
+    admin.setPhone("0123456789");
+    admin.setFullName("Quản trị viên");
+    admin.setAddress("Quản trị viên");
     admin.setActive(true);
     admin.setCreatedBy("admin");
 
@@ -163,6 +161,9 @@ public class UserServiceImpl implements UserService {
     client.setUserName("user");
     client.setPassword("user");
     client.setEmail("user@email.com");
+    client.setPhone("0123456789");
+    client.setFullName("Người dùng");
+    client.setAddress("Người dùng");
     client.setActive(true);
     client.setCreatedBy("admin");
 
@@ -178,24 +179,25 @@ public class UserServiceImpl implements UserService {
 
   public ResponseObjectDTO updateAppUser(UserDataDTO userDataDTO) {
     AppUser appUser = userRepository.findById(userDataDTO.getId()).orElseThrow(() ->
-      new CustomException("The user doesn't exist", HttpStatus.NOT_FOUND)
+        new CustomException("The user doesn't exist", HttpStatus.NOT_FOUND)
     );
     modelMapper.map(userDataDTO, appUser);
 
-    if(userRepository.existsByUserNameAndIdIsNotLike(appUser.getUserName(), appUser.getId())){
+    if (userRepository.existsByUserNameAndIdIsNotLike(appUser.getUserName(), appUser.getId())) {
       throw new CustomException("Username already exist", HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    if(userRepository.existsByEmailAndIdIsNot(appUser.getEmail(), appUser.getId())){
+    if (userRepository.existsByEmailAndIdIsNot(appUser.getEmail(), appUser.getId())) {
       throw new CustomException("Email already exist", HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    if(userRepository.existsByPhoneAndIdIsNot(appUser.getPhone(), appUser.getId())){
+    if (userRepository.existsByPhoneAndIdIsNot(appUser.getPhone(), appUser.getId())) {
       throw new CustomException("Phone already exist", HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    if(!appUser.getPassword().equalsIgnoreCase(userDataDTO.getConfirmPassword())){
-      throw new CustomException("Confirm password and password must be same", HttpStatus.UNPROCESSABLE_ENTITY);
+    if (!appUser.getPassword().equalsIgnoreCase(userDataDTO.getConfirmPassword())) {
+      throw new CustomException("Confirm password and password must be same",
+          HttpStatus.UNPROCESSABLE_ENTITY);
     }
     appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
     List<AppRole> list = roleService.getListAppRoleByListId(userDataDTO.getLstRoleId());
@@ -218,11 +220,12 @@ public class UserServiceImpl implements UserService {
     if (userRepository.existsByEmail(appUser.getEmail())) {
       throw new CustomException("Email is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
     }
-    if(userRepository.existsByPhone(appUser.getPhone())){
-     throw new CustomException("Phone is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+    if (userRepository.existsByPhone(appUser.getPhone())) {
+      throw new CustomException("Phone is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
     }
-    if(!appUser.getPassword().equalsIgnoreCase(userDataDTO.getConfirmPassword())){
-      throw new CustomException("Confirm password and password must be same", HttpStatus.UNPROCESSABLE_ENTITY);
+    if (!appUser.getPassword().equalsIgnoreCase(userDataDTO.getConfirmPassword())) {
+      throw new CustomException("Confirm password and password must be same",
+          HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
@@ -237,7 +240,8 @@ public class UserServiceImpl implements UserService {
     userRepository.save(appUser);
     return new ResponseObjectDTO(true, "Thêm người dùng mới thành công", null);
   }
-  public ResponseObjectDTO deleteListAppUser(List<Long> lstIdUser){
+
+  public ResponseObjectDTO deleteListAppUser(List<Long> lstIdUser) {
     userRepository.deleteAllById(lstIdUser);
     return new ResponseObjectDTO(true, "Xoá list người dùng thành công", null);
   }

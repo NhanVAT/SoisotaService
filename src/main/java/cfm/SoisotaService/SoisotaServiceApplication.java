@@ -1,19 +1,15 @@
 package cfm.SoisotaService;
 
-import cfm.SoisotaService.entities.AppUser;
-import cfm.SoisotaService.services.MenuService;
-import cfm.SoisotaService.services.RoleService;
-import cfm.SoisotaService.services.UserService;
+import cfm.SoisotaService.services.MenuService.MenuService;
+import cfm.SoisotaService.services.RoleService.RoleService;
+import cfm.SoisotaService.services.UserService.UserService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @RequiredArgsConstructor

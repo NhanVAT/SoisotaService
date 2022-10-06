@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "app_back")
+@Table(name = "app_bank")
 public class AppBank extends AbstractAuditingEntity implements Serializable {
 
   @Id

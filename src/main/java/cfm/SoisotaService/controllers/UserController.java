@@ -7,7 +7,7 @@ import cfm.SoisotaService.entities.AppUser;
 import cfm.SoisotaService.models.AuthToken;
 import cfm.SoisotaService.models.LoginUser;
 import cfm.SoisotaService.models.RegisterRoleUser;
-import cfm.SoisotaService.services.UserService;
+import cfm.SoisotaService.services.UserService.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -15,7 +15,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

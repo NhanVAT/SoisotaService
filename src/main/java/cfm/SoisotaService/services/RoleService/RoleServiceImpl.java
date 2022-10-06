@@ -1,17 +1,14 @@
-package cfm.SoisotaService.services.impl;
+package cfm.SoisotaService.services.RoleService;
 
-import cfm.SoisotaService.dto.MenuDataDTO;
 import cfm.SoisotaService.dto.ResponseObjectDTO;
 import cfm.SoisotaService.dto.RoleDataDTO;
 import cfm.SoisotaService.entities.AppMenu;
 import cfm.SoisotaService.entities.AppRole;
 import cfm.SoisotaService.repositories.RoleRepository;
-import cfm.SoisotaService.services.MenuService;
-import cfm.SoisotaService.services.RoleService;
+import cfm.SoisotaService.services.MenuService.MenuService;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

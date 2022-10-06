@@ -1,4 +1,4 @@
-package cfm.SoisotaService.services;
+package cfm.SoisotaService.services.MenuService;
 
 import cfm.SoisotaService.dto.MenuDataDTO;
 import cfm.SoisotaService.dto.ResponseObjectDTO;
