@@ -135,6 +135,14 @@ public class UserServiceImpl implements UserService {
     return userRepository.findAll();
   }
 
+
+  public ResponseObjectDTO checkEmail(String email) {
+    if (!userRepository.existsByEmail(email)) {
+      throw new CustomException("Email does not exist", HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+    return new ResponseObjectDTO(true, "Email hop le", null);
+  }
+
   public void initUserDefault() {
 
     AppUser admin = new AppUser();

@@ -37,7 +37,7 @@ public class UserController {
   @PostMapping("/signin")
   @ApiOperation(value = "${UserController.signin}")
   @ApiResponses(value = {//
-      @ApiResponse(code = 400, message = "Something went wrong"), //
+      @ApiResponse(code = 400, message = "Something went wrong"),
       @ApiResponse(code = 422, message = "Invalid username/password supplied")})
   public ResponseEntity<?> login(@RequestBody LoginUser loginUser) {
     final String token = userService.signin(loginUser);
@@ -111,6 +111,16 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.OK).body(
             new ResponseObjectDTO(true, "Reigister New Account Success", username)
     );
+  }
+
+  @GetMapping("/checkEmail")
+  @ApiOperation(value = "CheckEmail")
+  @ApiResponses(value = {
+    @ApiResponse(code = 400, message = "Something went wrong"),
+    @ApiResponse(code = 422, message = "Email does not exist")})
+  public ResponseEntity <ResponseObjectDTO> checkEmail(@RequestParam(value = "email") String email ){
+    userService.checkEmail(email);
+   return ResponseEntity.status(HttpStatus.OK).body(new ResponseObjectDTO(true, "send mail success",email));
   }
 
 }

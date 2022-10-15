@@ -34,4 +34,6 @@ public interface UserService {
 
     ResponseObjectDTO deleteListAppUser(List<Long> lstIdUser);
 
+    ResponseObjectDTO checkEmail(String email);
+
 }
