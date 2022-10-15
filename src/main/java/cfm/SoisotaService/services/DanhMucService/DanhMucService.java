@@ -7,6 +7,8 @@ import cfm.SoisotaService.dto.ResponseObjectDTO;
 import cfm.SoisotaService.entities.AppBank;
 import cfm.SoisotaService.entities.AppInvoiceTemplate;
 import cfm.SoisotaService.entities.AppPackage;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 public interface DanhMucService {
@@ -40,4 +42,6 @@ public interface DanhMucService {
   ResponseObjectDTO deleteAppInvoiceTemplate(Long idInvoiceTemplate);
 
   ResponseObjectDTO deleteListAppInvoiceTemplate(List<Long> lstIdInvoiceTemplate);
+
+  ResponseObjectDTO getViewInvoiceTemplate(Long id);
 }

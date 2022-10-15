@@ -50,12 +50,12 @@ public class UserServiceImpl implements UserService {
   public String signin(LoginUser loginUser) {
     try {
       authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(loginUser.getUserName(),
-              loginUser.getPassword()));
+        new UsernamePasswordAuthenticationToken(loginUser.getUserName(),
+          loginUser.getPassword()));
 
       return jwtTokenProvider.createToken(loginUser.getUserName(),
-          userRepository.findByUserName(loginUser.getUserName()).getRoles().stream()
-              .collect(Collectors.toList()));
+        userRepository.findByUserName(loginUser.getUserName()).getRoles().stream()
+          .collect(Collectors.toList()));
     } catch (AuthenticationException e) {
       throw new CustomException("Invalid username/password supplied",
           HttpStatus.UNPROCESSABLE_ENTITY);
