@@ -5,6 +5,7 @@ import cfm.SoisotaService.dto.InvoiceTemplateDataDTO;
 import cfm.SoisotaService.dto.PackageDataDTO;
 import cfm.SoisotaService.dto.ResponseObjectDTO;
 import cfm.SoisotaService.services.DanhMucService.DanhMucService;
+import com.mysql.cj.util.LogUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -18,13 +19,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -194,9 +190,10 @@ public class DanhMucController {
       @ApiResponse(code = 403, message = "Access denied"), //
       @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
   public ResponseEntity<ResponseObjectDTO> insertAppInvoiceTemplate(
-      @Valid @RequestBody InvoiceTemplateDataDTO bankDataDTO) {
+          @Valid @RequestBody InvoiceTemplateDataDTO appInvoice
+         ) {
     return ResponseEntity.status(HttpStatus.OK)
-        .body(danhMucService.insertAppInvoiceTemplate(bankDataDTO));
+        .body(danhMucService.insertAppInvoiceTemplate(appInvoice));
   }
 
   @PutMapping("/updateAppInvoiceTemplate")
@@ -241,5 +238,20 @@ public class DanhMucController {
       @Valid @RequestBody List<Long> lstIdInvoiceTemplate) {
     return ResponseEntity.status(HttpStatus.OK)
         .body(danhMucService.deleteListAppInvoiceTemplate(lstIdInvoiceTemplate));
+  }
+
+  @GetMapping(value = "/getViewInvoiceTemplate")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @ApiOperation(value = "Get View AppInvoiceTemplate", response = ResponseEntity.class, authorizations = {
+      @Authorization(value = "apiKey")})
+  @ApiResponses(value = {//
+      @ApiResponse(code = 400, message = "Something went wrong"), //
+      @ApiResponse(code = 403, message = "Access denied"), //
+      @ApiResponse(code = 404, message = "The role doesn't exist"), //
+      @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+  public ResponseEntity<ResponseObjectDTO> getViewInvoiceTemplate(
+      @RequestParam(value = "id") Long idInvoiceTemplate) {
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(danhMucService.getViewInvoiceTemplate(idInvoiceTemplate));
   }
 }
