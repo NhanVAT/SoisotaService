@@ -1,5 +1,4 @@
 spring:
-
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -23,8 +22,9 @@ spring:
     max-idle: 20
     min-idle: 15
   jpa:
-    #hibernate:
+    hibernate:
       #ddl-auto: create
+      ddl-auto: update
       #ddl-auto: none
       #naming:
       #physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl

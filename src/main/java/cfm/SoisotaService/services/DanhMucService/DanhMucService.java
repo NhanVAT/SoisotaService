@@ -7,6 +7,8 @@ import cfm.SoisotaService.dto.ResponseObjectDTO;
 import cfm.SoisotaService.entities.AppBank;
 import cfm.SoisotaService.entities.AppInvoiceTemplate;
 import cfm.SoisotaService.entities.AppPackage;
+import cfm.SoisotaService.models.ResponseFileData;
+import org.json.JSONException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -43,5 +45,5 @@ public interface DanhMucService {
 
   ResponseObjectDTO deleteListAppInvoiceTemplate(List<Long> lstIdInvoiceTemplate);
 
-  ResponseObjectDTO getViewInvoiceTemplate(Long id);
+  ResponseFileData getViewInvoiceTemplate(Long idInvoiceTemplate) throws JSONException;
 }
