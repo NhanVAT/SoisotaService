@@ -1,30 +1,32 @@
 package cfm.SoisotaService.services.DanhMucService;
 
-import cfm.SoisotaService.components.TransformXSLTAndXML;
-import cfm.SoisotaService.dto.BankDataDTO;
-import cfm.SoisotaService.dto.DataMBankDTO;
-import cfm.SoisotaService.dto.InvoiceTemplateDataDTO;
-import cfm.SoisotaService.dto.PackageDataDTO;
-import cfm.SoisotaService.dto.ResponseObjectDTO;
+import cfm.SoisotaService.components.TransformXML;
+import cfm.SoisotaService.dto.*;
 import cfm.SoisotaService.entities.AppBank;
 import cfm.SoisotaService.entities.AppInvoiceTemplate;
 import cfm.SoisotaService.entities.AppPackage;
-import cfm.SoisotaService.models.ResponseFileData;
+import cfm.SoisotaService.entities.AppSmsEmail;
 import cfm.SoisotaService.repositories.BankRepository;
 import cfm.SoisotaService.repositories.InvoiceTemplateRepository;
 import cfm.SoisotaService.repositories.PackageRepository;
+import cfm.SoisotaService.repositories.SmsEmailRepository;
 import cfm.SoisotaService.services.BaseService;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+
+import java.io.*;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 import javax.transaction.Transactional;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.transform.*;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
 import lombok.RequiredArgsConstructor;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
 
 @Service(value = "danhMucService")
 @RequiredArgsConstructor
@@ -33,10 +35,10 @@ public class DanhMucServiceImpl extends BaseService implements DanhMucService {
   private final ModelMapper modelMapper;
   private final BankRepository bankRepository;
   private final InvoiceTemplateRepository invoiceTemplateRepository;
+  private final SmsEmailRepository smsEmailRepository;
   private final PackageRepository packageRepository;
-  private final TransformXSLTAndXML transformXSLTAndXML;
-  private final Gson gson = new GsonBuilder().serializeNulls().create();
 
+  private final TransformXML transformXML;
 
   @Override
   public List<AppBank> getAllBank() {
@@ -169,8 +171,7 @@ public class DanhMucServiceImpl extends BaseService implements DanhMucService {
 //    } catch (SQLException e) {
 //      throw new RuntimeException(e);
 //    }
-    byte[] templateDataByte = Base64.getDecoder()
-        .decode(invoiceTemplateDataDTO.getTemplateDataBase64());
+    byte[] templateDataByte = Base64.getDecoder().decode(invoiceTemplateDataDTO.getTemplateDataBase64());
     appInvoiceTemplate.setTemplateData(templateDataByte);
 
     invoiceTemplateRepository.save(appInvoiceTemplate);
@@ -190,8 +191,7 @@ public class DanhMucServiceImpl extends BaseService implements DanhMucService {
         invoiceTemplateDataDTO.getId()).get();
 
     // base64 -> byte[] -> blob
-    byte[] templateDataByte = Base64.getDecoder()
-        .decode(invoiceTemplateDataDTO.getTemplateDataBase64());
+    byte[] templateDataByte = Base64.getDecoder().decode(invoiceTemplateDataDTO.getTemplateDataBase64());
     appInvoiceTemplate.setTemplateData(templateDataByte);
 
     if (appInvoiceTemplate != null) {
@@ -223,31 +223,109 @@ public class DanhMucServiceImpl extends BaseService implements DanhMucService {
     return new ResponseObjectDTO(true, "Xóa Mẫu hóa đơn thành công", null);
   }
 
-  @Override
-  public ResponseFileData getViewInvoiceTemplate(Long idInvoiceTemplate)
-      throws JSONException {
-    //Laấy mẫu hóa đơn theo ID truyền vao
-    AppInvoiceTemplate appInvoiceTemplate = invoiceTemplateRepository.findById(idInvoiceTemplate)
-        .get();
-
-    //Tạo data XML của hóa đơn
+  public ResponseObjectDTO getViewInvoiceTemplate(Long id){
+    AppInvoiceTemplate appInvoiceTemplate = invoiceTemplateRepository.findById(id).get();
     DataMBankDTO dataMBankDTO = new DataMBankDTO();
-    dataMBankDTO.MA_DDO = "013246546";
-    dataMBankDTO.TEN_DDIEN_DVI = "013246546222";
-    dataMBankDTO.DUONG_PHO = "0132461231546";
-    dataMBankDTO.EMAIL_KH = "013246123546";
-    dataMBankDTO.TKHOAN_KH = "0132463rrrr546";
-    dataMBankDTO.TEN_DVIQLY_UP_CTREN = "013ffff246546";
-    dataMBankDTO.NGAY_CTHANG = "0132ff46546";
 
-    //Từ data XML OBJ => Json
-    JSONObject jsDataTempalte = new JSONObject();
-    jsDataTempalte.put("TTDCNGCS", new JSONObject(gson.toJson(dataMBankDTO)));
+    String jsonObject = transformXML.modelToJsonObject(dataMBankDTO);
+//    Document documentXmlXSL = transformXML.JSonToXmlXSL(jsonObject);
+//    String abc = transformXML.transform(documentXmlXSL, appInvoiceTemplate.getTemplateData());
+    byte[] xml = transformXML.JSonToXmlXSLByte(jsonObject);
+    String abc = transformXML.getTransformedHtmlBase64(xml, appInvoiceTemplate.getTemplateData());
 
-    Document xml = transformXSLTAndXML.jSonToXmlXSL(jsDataTempalte);
-    String html = transformXSLTAndXML.transform(xml, appInvoiceTemplate.getTemplateData());
-    String result = html.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "");
-
-    return new ResponseFileData(true, "Tạo view Mẫu hóa đơn thành công", result, null);
+    return new ResponseObjectDTO(true, "Tìm thấy", abc);
   }
+
+  private byte[] getTransformedObjectToXml(AppInvoiceTemplate appInvoiceTemplate){
+    try {
+      // transform object to xml
+      JAXBContext jaxbContext = JAXBContext.newInstance(cfm.SoisotaService.entities.AppInvoiceTemplate.class);
+      Marshaller marshaller = jaxbContext.createMarshaller();
+      marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+      StringWriter sw = new StringWriter();
+      Result result = new StreamResult(sw);
+      marshaller.marshal(appInvoiceTemplate, result);
+      System.out.println(sw); // string
+
+      //encode xml: string to byte[]
+      String encodedString = Base64.getEncoder().encodeToString(sw.toString().getBytes());
+      return Base64.getDecoder().decode(encodedString);
+    } catch (JAXBException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private String getTransformedHtmlBase64(byte[] xml, byte[] xsl){
+    try {
+      //declare
+      Source srcXml = new StreamSource(new ByteArrayInputStream(xml));
+      Source srcXsl = new StreamSource(new ByteArrayInputStream(xsl));
+
+      // transform to html
+      StringWriter sw = new StringWriter();
+      Result result = new StreamResult(sw);
+
+      TransformerFactory tFactory = TransformerFactory.newInstance();
+      Transformer transformer = tFactory.newTransformer(srcXsl);
+      transformer.transform(srcXml, result);
+      System.out.println(sw);
+
+      //** convert html to pdf
+
+//      HtmlConverter.convertToPdf(sw.toString(), fileOutputStream);
+//      FileOutputStream file = null;
+//      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//      baos.writeTo(file);
+//      byte[] fileByte = baos.toByteArray();
+//      Base64.getEncoder().encodeToString(fileByte);
+
+      return Base64.getEncoder().encodeToString(sw.toString().getBytes()); // html base 64
+    } catch (TransformerException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public List<AppSmsEmail> getAllSmsEmailTemplate(){
+    return smsEmailRepository.findAll();
+  }
+  @Transactional
+  public ResponseObjectDTO insertAppSmsEmailTemplate(SmsEmaillDataDTO smsEmaillDataDTO){
+    // map thong tin qua
+    AppSmsEmail appSmsEmail = modelMapper.map(smsEmaillDataDTO, AppSmsEmail.class);
+    smsEmailRepository.save(appSmsEmail);
+    String smsEmailCode = this.generateCode(appSmsEmail.getId(), "APSMSEMAil");
+    appSmsEmail.setTemplateCode(smsEmailCode);
+    return new ResponseObjectDTO(true, "Tạo mới form sms email thành công", null);
+  }
+
+  @Transactional
+  public ResponseObjectDTO updateAppSmsEmailTemplate(SmsEmaillDataDTO smsEmaillDataDTO){
+    AppSmsEmail appSmsEmail = smsEmailRepository.findById(smsEmaillDataDTO.getId()).get();
+    if (appSmsEmail != null){
+       modelMapper.map(smsEmaillDataDTO, appSmsEmail);
+      smsEmailRepository.save(appSmsEmail);
+    }
+    return new ResponseObjectDTO(true, "Cập nhật thành công", null);
+  }
+  @Transactional
+  public ResponseObjectDTO deleteAppSmsEmailTemplate(Long id){
+    if (id != null) {
+      smsEmailRepository.deleteById(id);
+    }
+    return new ResponseObjectDTO(true, "Xóa thành công ", null);
+  }
+  @Transactional
+  public ResponseObjectDTO deleteListAppSmsEmailTemplate(List<Long> listId){
+    if (listId != null && !listId.isEmpty()){
+      smsEmailRepository.deleteAllById(listId);
+    }
+    return new ResponseObjectDTO(true, "Xóa thành công", null);
+  }
+  public Optional<AppSmsEmail> getViewSmsEmailTemplate(Long id){
+    return smsEmailRepository.findById(id);
+
+  }
+
 }
+

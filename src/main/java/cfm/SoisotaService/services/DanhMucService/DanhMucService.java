@@ -1,17 +1,13 @@
 package cfm.SoisotaService.services.DanhMucService;
 
-import cfm.SoisotaService.dto.BankDataDTO;
-import cfm.SoisotaService.dto.InvoiceTemplateDataDTO;
-import cfm.SoisotaService.dto.PackageDataDTO;
-import cfm.SoisotaService.dto.ResponseObjectDTO;
+import cfm.SoisotaService.dto.*;
 import cfm.SoisotaService.entities.AppBank;
 import cfm.SoisotaService.entities.AppInvoiceTemplate;
 import cfm.SoisotaService.entities.AppPackage;
-import cfm.SoisotaService.models.ResponseFileData;
-import org.json.JSONException;
-import org.springframework.web.multipart.MultipartFile;
+import cfm.SoisotaService.entities.AppSmsEmail;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DanhMucService {
 
@@ -45,5 +41,11 @@ public interface DanhMucService {
 
   ResponseObjectDTO deleteListAppInvoiceTemplate(List<Long> lstIdInvoiceTemplate);
 
-  ResponseFileData getViewInvoiceTemplate(Long idInvoiceTemplate) throws JSONException;
+  ResponseObjectDTO getViewInvoiceTemplate(Long id);
+  List<AppSmsEmail> getAllSmsEmailTemplate();
+  ResponseObjectDTO insertAppSmsEmailTemplate(SmsEmaillDataDTO smsEmaillDataDTO);
+  ResponseObjectDTO updateAppSmsEmailTemplate(SmsEmaillDataDTO smsEmaillDataDTO);
+  ResponseObjectDTO deleteAppSmsEmailTemplate(Long id);
+  ResponseObjectDTO deleteListAppSmsEmailTemplate(List<Long> listId);
+  Optional<AppSmsEmail> getViewSmsEmailTemplate(Long id);
 }
