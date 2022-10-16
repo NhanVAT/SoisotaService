@@ -1,23 +1,22 @@
 package cfm.SoisotaService.services.DanhMucService;
 
 import cfm.SoisotaService.components.TransformXSLTAndXML;
-import cfm.SoisotaService.dto.BankDataDTO;
-import cfm.SoisotaService.dto.DataMBankDTO;
-import cfm.SoisotaService.dto.InvoiceTemplateDataDTO;
-import cfm.SoisotaService.dto.PackageDataDTO;
-import cfm.SoisotaService.dto.ResponseObjectDTO;
+import cfm.SoisotaService.dto.*;
 import cfm.SoisotaService.entities.AppBank;
 import cfm.SoisotaService.entities.AppInvoiceTemplate;
 import cfm.SoisotaService.entities.AppPackage;
+import cfm.SoisotaService.entities.AppSMSEmailTemplate;
 import cfm.SoisotaService.models.ResponseFileData;
 import cfm.SoisotaService.repositories.BankRepository;
 import cfm.SoisotaService.repositories.InvoiceTemplateRepository;
 import cfm.SoisotaService.repositories.PackageRepository;
+import cfm.SoisotaService.repositories.SmsEmailRepository;
 import cfm.SoisotaService.services.BaseService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONException;
@@ -33,6 +32,7 @@ public class DanhMucServiceImpl extends BaseService implements DanhMucService {
   private final ModelMapper modelMapper;
   private final BankRepository bankRepository;
   private final InvoiceTemplateRepository invoiceTemplateRepository;
+  private final SmsEmailRepository smsEmailRepository;
   private final PackageRepository packageRepository;
   private final TransformXSLTAndXML transformXSLTAndXML;
   private final Gson gson = new GsonBuilder().serializeNulls().create();
@@ -249,5 +249,44 @@ public class DanhMucServiceImpl extends BaseService implements DanhMucService {
     String result = html.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "");
 
     return new ResponseFileData(true, "Tạo view Mẫu hóa đơn thành công", result, null);
+  }
+
+  public List<AppSMSEmailTemplate> getAllSmsEmailTemplate(){
+    return smsEmailRepository.findAll();
+  }
+  @Transactional
+  public ResponseObjectDTO insertAppSmsEmailTemplate(SmsEmaillDataDTO smsEmaillDataDTO){
+    // map thong tin qua
+    AppSMSEmailTemplate appSMSEmailTemplate = modelMapper.map(smsEmaillDataDTO, AppSMSEmailTemplate.class);
+    smsEmailRepository.save(appSMSEmailTemplate);
+    String smsEmailCode = this.generateCode(appSMSEmailTemplate.getId(), "APSMSEMAIL");
+    appSMSEmailTemplate.setTemplateCode(smsEmailCode);
+    return new ResponseObjectDTO(true, "Tạo mới sms email thành công", null);
+  }
+  @Transactional
+  public ResponseObjectDTO updateAppSmsEmailTemplate(SmsEmaillDataDTO smsEmaillDataDTO){
+    AppSMSEmailTemplate appSMSEmailTemplate = smsEmailRepository.findById(smsEmaillDataDTO.getId()).get();
+    if (appSMSEmailTemplate != null){
+      modelMapper.map(smsEmaillDataDTO, appSMSEmailTemplate);
+      smsEmailRepository.save(appSMSEmailTemplate);
+    }
+    return new ResponseObjectDTO(true, "Cập nhật thành công", null);
+  }
+  @Transactional
+  public ResponseObjectDTO deleteAppSmsEmailTemplate(Long id){
+    if (id != null) {
+      smsEmailRepository.deleteById(id);
+    }
+    return new ResponseObjectDTO(true, "Xóa thành công ", null);
+  }
+  @Transactional
+  public ResponseObjectDTO deleteListAppSmsEmailTemplate(List<Long> listId){
+    if (listId != null && !listId.isEmpty()){
+      smsEmailRepository.deleteAllById(listId);
+    }
+    return new ResponseObjectDTO(true, "Xóa thành công", null);
+  }
+  public Optional<AppSMSEmailTemplate> getViewSmsEmailTemplate(Long id){
+    return smsEmailRepository.findById(id);
   }
 }

@@ -1,9 +1,7 @@
 package cfm.SoisotaService.controllers;
 
-import cfm.SoisotaService.dto.BankDataDTO;
-import cfm.SoisotaService.dto.InvoiceTemplateDataDTO;
-import cfm.SoisotaService.dto.PackageDataDTO;
-import cfm.SoisotaService.dto.ResponseObjectDTO;
+import cfm.SoisotaService.dto.*;
+import cfm.SoisotaService.entities.AppSMSEmailTemplate;
 import cfm.SoisotaService.models.ResponseFileData;
 import cfm.SoisotaService.services.DanhMucService.DanhMucService;
 import io.swagger.annotations.Api;
@@ -12,6 +10,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +19,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -259,4 +252,77 @@ public class DanhMucController {
       throws JSONException {
     return danhMucService.getViewInvoiceTemplate(idInvoiceTemplate);
   }
+
+  // smsemail
+  @GetMapping(value = "/getAllSmsEmailTemplate")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @ApiOperation(value="Get All SMS EMAIL TEMPLATE", response = SmsEmaillDataDTO.class, authorizations = {
+    @Authorization(value = "apiKey")})
+  @ApiResponses(value = {
+    @ApiResponse(code = 400, message = "something went wrong"),
+    @ApiResponse(code = 403, message = "Access denied"),
+    @ApiResponse(code = 404, message = "The role doesn't exist"),
+    @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+  public List<SmsEmaillDataDTO> getAllSmsEmailTemplate(){
+    return danhMucService.getAllSmsEmailTemplate().stream()
+      .map(sms -> modelMapper.map(sms, SmsEmaillDataDTO.class)).collect(Collectors.toList());
+  }
+  @PostMapping(value = "/insertAppSmsEmailTemplate")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @ApiOperation(value = "INSERT APP SMS EMAIL TEMPLATE", response = SmsEmaillDataDTO.class, authorizations = {
+    @Authorization(value = "apiKey")})
+  @ApiResponses(value = {
+    @ApiResponse(code = 400, message = "something went wrong"),
+    @ApiResponse(code = 403, message = "Access denied"),
+    @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+  public ResponseEntity<ResponseObjectDTO> insertAppSmsEmailTemplate(@RequestBody SmsEmaillDataDTO smsEmaillDataDTO ){
+    return ResponseEntity.status(HttpStatus.OK).body(danhMucService.insertAppSmsEmailTemplate(smsEmaillDataDTO));
+  }
+
+  @PostMapping(value = "/updateAppSmsEmailTemplate")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @ApiOperation(value = "UPDATE APP SMS EMAIL TEMPLATE", response = SmsEmaillDataDTO.class, authorizations = {
+    @Authorization("apiKey")})
+  @ApiResponses(value = {
+    @ApiResponse(code = 400, message = "something went wrong"),
+    @ApiResponse(code = 403, message = "Access denied"),
+    @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+  public  ResponseEntity<ResponseObjectDTO> updateAppSmsEmailTemplate(@RequestBody SmsEmaillDataDTO smsEmaillDataDTO){
+    return ResponseEntity.status(HttpStatus.OK).body(danhMucService.updateAppSmsEmailTemplate(smsEmaillDataDTO));
+  }
+  @PostMapping(value = "/deleteAppSmsEmailTemplate")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @ApiOperation(value = "DELETE APP SMS EMAIL TEMPLATE", response = SmsEmaillDataDTO.class, authorizations = {
+    @Authorization("apiKey")})
+  @ApiResponses(value = {
+    @ApiResponse(code = 400, message = "something went wrong"),
+    @ApiResponse(code = 403, message = "Access denied"),
+    @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+  public ResponseEntity<ResponseObjectDTO> deleteAppSmsEmailTemplate(@RequestBody Long id){
+    return ResponseEntity.status(HttpStatus.OK).body(danhMucService.deleteAppSmsEmailTemplate(id));
+  }
+  @PostMapping(value = "/deleteListAppSmsEmailTemplate")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @ApiOperation(value = "DELETE LIST APP SMS EMAIL TEMPLATE", response = SmsEmaillDataDTO.class, authorizations = {
+    @Authorization("apiKey")})
+  @ApiResponses(value = {
+    @ApiResponse(code = 400, message = "something went wrong"),
+    @ApiResponse(code = 403, message = "Access denied"),
+    @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+  public ResponseEntity<ResponseObjectDTO> deleteListAppSmsEmailTemplate(@RequestBody List<Long> listId){
+    return ResponseEntity.status(HttpStatus.OK).body(danhMucService.deleteListAppSmsEmailTemplate(listId));
+  }
+  @GetMapping(value = "/getViewSmsEmailTemplate")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @ApiOperation(value = "GET VIEW SMS EMAIL TEMPLATE", response = SmsEmaillDataDTO.class, authorizations = {
+    @Authorization("apiKey")})
+  @ApiResponses(value = {
+    @ApiResponse(code = 400, message = "something went wrong"),
+    @ApiResponse(code = 403, message = "Access denied"),
+    @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+  public Optional<AppSMSEmailTemplate> getViewSmsEmailTemplate(@RequestParam(value = "id") Long id){
+    return danhMucService.getViewSmsEmailTemplate(id);
+
+  }
+
 }
