@@ -1,13 +1,9 @@
 package cfm.SoisotaService.dto;
 
-import java.io.File;
 import java.time.Instant;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -19,6 +15,7 @@ public class InvoiceTemplateDataDTO {
   private String templateType;
   private String templateDescribe;
   private byte[] templateData;
+  private String viewTemplateDataHTML;
   private Boolean active;
   @NotNull(message = "Thiếu createdBy")
   private String createdBy;
