@@ -15,7 +15,6 @@ import java.time.Instant;
 public class SmsEmaillDataDTO {
 
   private Long id;
-  @NotEmpty(message = "Thiếu templateCode")
   private String templateCode;
   private String templateContent;
   private String templateDescribe;

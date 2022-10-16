@@ -22,7 +22,7 @@ public class AppSMSEmailTemplate extends AbstractAuditingEntity implements Seria
   @Column(name = "id")
   private Long id;
 
-  @Column(name = "template_code", nullable = false)
+  @Column(name = "template_code")
   private String templateCode;
 
   @Column(name = "template_name", nullable = false)
