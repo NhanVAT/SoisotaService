@@ -5,35 +5,37 @@ import cfm.SoisotaService.dto.UserDataDTO;
 import cfm.SoisotaService.entities.AppUser;
 import cfm.SoisotaService.models.LoginUser;
 import cfm.SoisotaService.models.RegisterRoleUser;
-
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 public interface UserService {
-    String signin(LoginUser loginUser);
 
-    String signup(AppUser appUser);
+  String signin(LoginUser loginUser);
 
-    void delete(String username);
+  String signup(AppUser appUser);
 
-    AppUser search(String username);
+  void delete(String username);
 
-    AppUser getInfoCurrentUser(HttpServletRequest req);
+  AppUser search(String username);
 
-    String refresh(String username);
+  AppUser getInfoCurrentUser(HttpServletRequest req);
 
-    List<AppUser> getAllUser();
+  String refresh(String username);
 
-    void initUserDefault();
+  List<AppUser> getAllUser();
 
-    String register(AppUser appUser, RegisterRoleUser registerRoleUser) ;
+  void initUserDefault();
 
-    ResponseObjectDTO insertAppUser(UserDataDTO userDataDTO);
+  @Transactional
+  ResponseObjectDTO register(RegisterRoleUser registerRoleUser);
 
-    ResponseObjectDTO updateAppUser(UserDataDTO userDataDTO);
+  ResponseObjectDTO insertAppUser(UserDataDTO userDataDTO);
 
-    ResponseObjectDTO deleteListAppUser(List<Long> lstIdUser);
+  ResponseObjectDTO updateAppUser(UserDataDTO userDataDTO);
 
-    ResponseObjectDTO checkEmail(String email);
+  ResponseObjectDTO deleteListAppUser(List<Long> lstIdUser);
+
+  ResponseObjectDTO checkEmail(String email);
 
 }

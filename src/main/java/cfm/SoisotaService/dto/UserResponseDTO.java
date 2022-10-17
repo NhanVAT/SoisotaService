@@ -18,6 +18,7 @@ public class UserResponseDTO {
   private String address;
   private Integer prestigePoints;
   private byte[] avatarImage;
+  private Integer sexUser;
   private String password;
   private Boolean active;
   private String createdBy;

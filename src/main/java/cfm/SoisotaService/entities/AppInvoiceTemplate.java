@@ -1,13 +1,18 @@
 package cfm.SoisotaService.entities;
 
 import java.io.Serializable;
-import java.sql.Blob;
-import javax.persistence.*;
-import javax.xml.bind.annotation.*;
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.type.BlobType;
 
 @Entity
 @Data

@@ -11,13 +11,17 @@ import cfm.SoisotaService.repositories.UserRepository;
 import cfm.SoisotaService.security.JwtTokenProvider;
 import cfm.SoisotaService.services.MenuService.MenuService;
 import cfm.SoisotaService.services.RoleService.RoleService;
+import cfm.SoisotaService.util.Constants;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -50,12 +54,12 @@ public class UserServiceImpl implements UserService {
   public String signin(LoginUser loginUser) {
     try {
       authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(loginUser.getUserName(),
-          loginUser.getPassword()));
+          new UsernamePasswordAuthenticationToken(loginUser.getUserName(),
+              loginUser.getPassword()));
 
       return jwtTokenProvider.createToken(loginUser.getUserName(),
-        userRepository.findByUserName(loginUser.getUserName()).getRoles().stream()
-          .collect(Collectors.toList()));
+          userRepository.findByUserName(loginUser.getUserName()).getRoles().stream()
+              .collect(Collectors.toList()));
     } catch (AuthenticationException e) {
       throw new CustomException("Invalid username/password supplied",
           HttpStatus.UNPROCESSABLE_ENTITY);
@@ -73,40 +77,70 @@ public class UserServiceImpl implements UserService {
     }
   }
 
-  public String register(AppUser appUser, RegisterRoleUser registerRoleUser) {
+  @Override
+  @Transactional
+  public ResponseObjectDTO register(RegisterRoleUser registerRoleUser) {
+    modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+    AppUser appUser = modelMapper.map(registerRoleUser, AppUser.class);
 
-    //check exist username
-    if (userRepository.existsByUserName(appUser.getUserName())) {
-      throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+    if (appUser != null) {
+      //check exist username
+      if (userRepository.existsByUserName(appUser.getUserName())) {
+        throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+      }
+
+      //check exist email
+      if (userRepository.existsByEmail(appUser.getEmail())) {
+        throw new CustomException("Email is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+      }
+
+      //check password vs confirm password
+      if (!appUser.getPassword().equalsIgnoreCase(registerRoleUser.getConfirmPassword())) {
+        throw new CustomException("Confirm password and password must be same ",
+            HttpStatus.UNPROCESSABLE_ENTITY);
+      }
+
+      if (!registerRoleUser.isAcceptTerm()) {
+        throw new CustomException("You need accept term before register ",
+            HttpStatus.UNPROCESSABLE_ENTITY);
+      }
+
+      appUser.setActive(true);
+      appUser.setCreatedBy("user");
+      appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
+
+      //set role: ROLE_USER
+      AppRole appRole = roleService.getByRoleKey("ROLE_USER");
+      Set<AppRole> roleSet = new HashSet<>();
+      roleSet.add(appRole);
+
+      appUser.setRoles(roleSet);
+      byte[] imageAvatar = null;
+
+      //set avatar mặc điịnh ở đây
+      switch (registerRoleUser.getSexUser()) {
+        case 0: {
+          imageAvatar = Base64.getDecoder().decode(Constants.BASE64_AVATAR_NAM);
+          break;
+        }
+        case 1: {
+          imageAvatar = Base64.getDecoder().decode(Constants.BASE64_AVATAR_NU);
+          break;
+        }
+        default: {
+          imageAvatar = Base64.getDecoder().decode(Constants.BASE64_AVATAR_OTHER);
+          break;
+        }
+      }
+
+      appUser.setAvatarImage(imageAvatar);
+
+      userRepository.save(appUser);
+
+      return new ResponseObjectDTO(true, "Reigister New Account Success", appUser.getUserName());
+    } else {
+      return new ResponseObjectDTO(false, "Account is empty", null);
     }
-    //check exist email
-    if (userRepository.existsByEmail(appUser.getEmail())) {
-      throw new CustomException("Email is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
-    }
-    //check password vs confirm password
-    if (!appUser.getPassword().equalsIgnoreCase(registerRoleUser.getConfirmPassword())) {
-      throw new CustomException("Confirm password and password must be same ",
-          HttpStatus.UNPROCESSABLE_ENTITY);
-    }
-
-    if (!registerRoleUser.isAcceptTerm()) {
-      throw new CustomException("You need accept term before register ",
-          HttpStatus.UNPROCESSABLE_ENTITY);
-    }
-
-    appUser.setActive(false);
-    appUser.setCreatedBy("user");
-    appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
-
-    //set role: ROLE_USER
-    AppRole appRole = roleService.getByRoleKey("ROLE_USER");
-    Set<AppRole> roleSet = new HashSet<>();
-    roleSet.add(appRole);
-
-    appUser.setRoles(roleSet);
-
-    userRepository.save(appUser);
-    return appUser.getUserName();
   }
 
   public void delete(String username) {
@@ -244,6 +278,27 @@ public class UserServiceImpl implements UserService {
     roleSet.addAll(list);
 
     appUser.setRoles(roleSet);
+
+    byte[] imageAvatar = null;
+    userDataDTO.setSexUser(2);
+
+    //set avatar mặc điịnh ở đây
+    switch (userDataDTO.getSexUser()) {
+      case 0: {
+        imageAvatar = Base64.getDecoder().decode(Constants.BASE64_AVATAR_NAM);
+        break;
+      }
+      case 1: {
+        imageAvatar = Base64.getDecoder().decode(Constants.BASE64_AVATAR_NU);
+        break;
+      }
+      default: {
+        imageAvatar = Base64.getDecoder().decode(Constants.BASE64_AVATAR_OTHER);
+        break;
+      }
+    }
+
+    appUser.setAvatarImage(imageAvatar);
 
     userRepository.save(appUser);
     return new ResponseObjectDTO(true, "Thêm người dùng mới thành công", null);

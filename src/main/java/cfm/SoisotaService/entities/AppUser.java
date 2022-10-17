@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
@@ -39,7 +40,7 @@ public class AppUser extends AbstractAuditingEntity implements Serializable {
   @Column(name = "email", unique = true, nullable = false)
   private String email;
 
-  @Column(name = "phone")
+  @Column(name = "phone", nullable = false)
   private String phone;
 
   @Column(name = "fullName")
@@ -52,6 +53,7 @@ public class AppUser extends AbstractAuditingEntity implements Serializable {
   private Integer prestigePoints;
 
   @Column(name = "avatar_image")
+  @Lob
   private byte[] avatarImage;
 
   @Size(min = 8, message = "Minimum password length: 8 characters")
