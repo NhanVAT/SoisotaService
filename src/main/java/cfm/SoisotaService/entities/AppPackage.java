@@ -21,7 +21,7 @@ public class AppPackage extends AbstractAuditingEntity implements Serializable {
   @Column(name = "id")
   private Long id;
 
-  @Column(name = "package_code", nullable = false)
+  @Column(name = "package_code")
   private String packageCode;
 
   @Column(name = "package_name", nullable = false)
