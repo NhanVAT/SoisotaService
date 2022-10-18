@@ -17,6 +17,7 @@ import com.google.gson.GsonBuilder;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONException;
@@ -96,15 +97,28 @@ public class DanhMucServiceImpl extends BaseService implements DanhMucService {
   }
 
   @Override
-  public List<AppPackage> getAllPackage() {
-    return packageRepository.findAll();
+  public List<PackageDataDTO> getAllPackage() {
+    List<AppPackage> result = packageRepository.findAll();
+    List<PackageDataDTO> list = result.stream().map(p -> modelMapper.map(p, PackageDataDTO.class)).collect(Collectors.toList());
+
+    if(!list.isEmpty()){
+      list.forEach(p -> p.setPackageEffectiveTime(p.getPackageEffectiveTime() / 60 / 24));
+      list.forEach(p -> p.setIsForever(p.getPackageEffectiveTime() == 0));
+      list.forEach(p -> p.setIsUnLimited(p.getPackageMaximumInvoice() == 0));
+    }
+
+    return list;
   }
 
   @Override
   @Transactional
   public ResponseObjectDTO insertAppPackage(PackageDataDTO packageDataDTO) {
     //Map thông tin qua đây nhé
+    packageDataDTO.setPackageEffectiveTime(validateEffectiveTime(packageDataDTO));
+    packageDataDTO.setPackageMaximumInvoice(validateMaximumInvoice(packageDataDTO));
+
     AppPackage appPackage = modelMapper.map(packageDataDTO, AppPackage.class);
+
 
     packageRepository.save(appPackage);
 
@@ -115,10 +129,27 @@ public class DanhMucServiceImpl extends BaseService implements DanhMucService {
     return new ResponseObjectDTO(true, "Tạo mới Gói thành công", null);
   }
 
+  private Long validateMaximumInvoice(PackageDataDTO packageDataDTO) {
+    if(packageDataDTO.getIsUnLimited() != null && packageDataDTO.getIsUnLimited()){
+      return 0L;
+    }
+    return packageDataDTO.getPackageMaximumInvoice();
+  }
+
+  private Long validateEffectiveTime(PackageDataDTO packageDataDTO) {
+    if (packageDataDTO.getIsForever() != null && packageDataDTO.getIsForever()){
+      return 0L;
+    }
+    return packageDataDTO.getPackageEffectiveTime() * 60 * 24;
+  }
+
   @Override
   @Transactional
   public ResponseObjectDTO updateAppPackage(PackageDataDTO packageDataDTO) {
     //Lấy AppPackage theo ID
+    packageDataDTO.setPackageEffectiveTime(validateEffectiveTime(packageDataDTO));
+    packageDataDTO.setPackageMaximumInvoice(validateMaximumInvoice(packageDataDTO));
+
     AppPackage appPackage = packageRepository.findById(packageDataDTO.getId()).get();
 
     if (appPackage != null) {
@@ -144,7 +175,7 @@ public class DanhMucServiceImpl extends BaseService implements DanhMucService {
   @Transactional
   public ResponseObjectDTO deleteListAppPackage(List<Long> lstIdPackage) {
     if (lstIdPackage != null && !lstIdPackage.isEmpty()) {
-      bankRepository.deleteAllById(lstIdPackage);
+      packageRepository.deleteAllById(lstIdPackage);
     }
 
     return new ResponseObjectDTO(true, "Xóa Gói thành công", null);

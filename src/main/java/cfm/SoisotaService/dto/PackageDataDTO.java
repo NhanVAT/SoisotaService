@@ -2,6 +2,8 @@ package cfm.SoisotaService.dto;
 
 import java.time.Instant;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,10 +19,12 @@ public class PackageDataDTO {
   private Long packageMaximumInvoice;
   private String packageDescribe;
   private Boolean active;
-  @NotEmpty(message = "Thiếu createdBy")
+  @NotNull(message = "Thiếu createdBy")
   private String createdBy;
-  @NotEmpty(message = "Thiếu createdDate")
+  @NotNull(message = "Thiếu createdDate")
   private Instant createdDate;
   private String lastModifiedBy;
   private Instant lastModifiedDate;
+  private Boolean isForever;
+  private Boolean isUnLimited;
 }

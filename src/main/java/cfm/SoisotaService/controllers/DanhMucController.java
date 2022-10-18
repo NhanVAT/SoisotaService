@@ -107,8 +107,7 @@ public class DanhMucController {
       @ApiResponse(code = 403, message = "Access denied"), //
       @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
   public List<PackageDataDTO> getAllPackage() {
-    return danhMucService.getAllPackage().stream()
-        .map(mank -> modelMapper.map(mank, PackageDataDTO.class)).collect(Collectors.toList());
+    return danhMucService.getAllPackage();
   }
 
   @PostMapping("/insertAppPackage")

@@ -21,7 +21,7 @@ public class AppBank extends AbstractAuditingEntity implements Serializable {
   @Column(name = "id")
   private Long id;
 
-  @Column(name = "bank_code", nullable = false)
+  @Column(name = "bank_code")
   private String bankCode;
 
   @Column(name = "bank_name", nullable = false)

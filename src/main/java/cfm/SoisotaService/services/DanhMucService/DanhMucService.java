@@ -24,7 +24,7 @@ public interface DanhMucService {
 
   ResponseObjectDTO deleteListAppBank(List<Long> lstIdBank);
 
-  List<AppPackage> getAllPackage();
+  List<PackageDataDTO> getAllPackage();
 
   ResponseObjectDTO insertAppPackage(PackageDataDTO packageDataDTO);
 
