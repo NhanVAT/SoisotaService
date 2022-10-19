@@ -220,15 +220,17 @@ public class DanhMucServiceImpl extends BaseService implements DanhMucService {
     AppInvoiceTemplate appInvoiceTemplate = invoiceTemplateRepository.findById(
         invoiceTemplateDataDTO.getId()).get();
 
-    // base64 -> byte[] -> blob
-    byte[] templateDataByte = Base64.getDecoder()
-        .decode(invoiceTemplateDataDTO.getTemplateDataBase64());
-    appInvoiceTemplate.setTemplateData(templateDataByte);
-
     if (appInvoiceTemplate != null) {
       modelMapper.map(invoiceTemplateDataDTO, appInvoiceTemplate);
 
       invoiceTemplateRepository.save(appInvoiceTemplate);
+    }
+
+    // base64 -> byte[] -> blob
+    if(invoiceTemplateDataDTO.getTemplateDataBase64() != null) {
+      byte[] templateDataByte = Base64.getDecoder()
+              .decode(invoiceTemplateDataDTO.getTemplateDataBase64());
+      appInvoiceTemplate.setTemplateData(templateDataByte);
     }
 
     return new ResponseObjectDTO(true, "Cập nhật Mẫu hóa đơn thành công", null);
