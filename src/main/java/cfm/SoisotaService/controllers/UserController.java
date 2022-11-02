@@ -5,6 +5,7 @@ import cfm.SoisotaService.dto.UserDataDTO;
 import cfm.SoisotaService.dto.UserResponseDTO;
 import cfm.SoisotaService.entities.AppUser;
 import cfm.SoisotaService.models.AuthToken;
+import cfm.SoisotaService.models.ForgotPasswordUser;
 import cfm.SoisotaService.models.LoginUser;
 import cfm.SoisotaService.models.RegisterRoleUser;
 import cfm.SoisotaService.services.UserService.UserService;
@@ -16,6 +17,7 @@ import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONException;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -122,6 +124,14 @@ public class UserController {
     userService.checkEmail(email);
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ResponseObjectDTO(true, "send mail success", email));
+  }
+
+  @PostMapping("/forgotPassword")
+  @ApiOperation(value = "Forgot Password", response = ResponseObjectDTO.class)
+  public ResponseEntity<ResponseObjectDTO> forgotPassword(
+      @RequestBody ForgotPasswordUser forgotPasswordUser) throws JSONException {
+
+    return ResponseEntity.status(HttpStatus.OK).body(userService.forgotPassword(forgotPasswordUser));
   }
 
 }

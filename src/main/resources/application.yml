@@ -55,3 +55,7 @@ UserController:
   getInfoCurrentUser: Returns current user's data
   register: Create user and return username for next login
 
+APIService:
+  SmsEmailService: http://10.1.117.239:9000/smsemail/
+
+
