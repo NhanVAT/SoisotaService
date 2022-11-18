@@ -332,8 +332,19 @@ public class UserServiceImpl implements UserService {
       throws JSONException {
 
     //1. Lay User ra de tao lại pass
-    AppUser userForgot = this.userRepository.findByUserNameAndActiveIsTrue(
-        forgotPasswordUser.getUserName());
+    AppUser userForgot = new AppUser();
+
+    forgotPasswordUser.setTypeSendPassword("SMS");
+    userForgot = this.userRepository.findByPhoneAndActiveIsTrue(
+        forgotPasswordUser.getEmailOrPhone());
+
+    if (userForgot == null) {
+      userForgot = this.userRepository.findByEmailAndActiveIsTrue(
+          forgotPasswordUser.getEmailOrPhone());
+
+      forgotPasswordUser.setTypeSendPassword("EMAIL");
+    }
+
     if (userForgot == null) {
       return new ResponseObjectDTO(false, "Người dùng không tồn tại trong hệ thống", null);
     }
@@ -352,7 +363,7 @@ public class UserServiceImpl implements UserService {
 
     //Replate lại thông tin de gui cho khach hang
     String content = appSMSEmailTemplateForgot.get().getTemplateContent();
-    content = content.replace("##USERNAME", forgotPasswordUser.getUserName());
+    content = content.replace("##USERNAME", userForgot.getUserName());
     content = content.replace("##PASSWORD", newPassword);
 
     //3. Gui cho khach hang thoi
@@ -360,7 +371,7 @@ public class UserServiceImpl implements UserService {
       case "SMS": {
 
         JSONObject param = new JSONObject();
-        param.put("phone", forgotPasswordUser.getPhone());
+        param.put("phone", userForgot.getPhone());
         param.put("appCode", "S_BILL");
         param.put("content", content);
 
@@ -370,7 +381,7 @@ public class UserServiceImpl implements UserService {
       }
       case "EMAIL": {
         JSONObject param = new JSONObject();
-        param.put("email", forgotPasswordUser.getEmail());
+        param.put("email", userForgot.getEmail());
         param.put("subject", "Cấp mới mật khẩu cho tài khoản " + forgotPasswordUser.getUserName());
         param.put("appCode", "S_BILL");
         param.put("content", content);
