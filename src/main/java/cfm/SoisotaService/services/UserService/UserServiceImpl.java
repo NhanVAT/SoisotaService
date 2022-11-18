@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,6 +71,7 @@ public class UserServiceImpl implements UserService {
   @Value("${APIService.SmsEmailService}")
   private String urlServiceSMSEmail;
 
+  @SneakyThrows
   public String signin(LoginUser loginUser) {
     try {
       authenticationManager.authenticate(
@@ -85,6 +87,7 @@ public class UserServiceImpl implements UserService {
     }
   }
 
+  @SneakyThrows
   public String signup(AppUser appUser) {
     if (!userRepository.existsByUserName(appUser.getUserName())) {
       appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
@@ -179,6 +182,7 @@ public class UserServiceImpl implements UserService {
         jwtTokenProvider.getUsername(jwtTokenProvider.resolveToken(req)));
   }
 
+  @SneakyThrows
   public String refresh(String username) {
     return jwtTokenProvider.createToken(username,
         userRepository.findByUserName(username).getRoles().stream().collect(Collectors.toList()));

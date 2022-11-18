@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
+import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONException;
@@ -48,8 +49,11 @@ public class UserController {
       @ApiResponse(code = 400, message = "Something went wrong"),
       @ApiResponse(code = 422, message = "Invalid username/password supplied")})
   public ResponseEntity<?> login(@RequestBody LoginUser loginUser) {
-    final String token = userService.signin(loginUser);
-    return ResponseEntity.ok(new AuthToken(token));
+    final String accessToken = userService.signin(loginUser);
+    final String tokenType = "Bearer";
+    final String refreshToken = UUID.randomUUID().toString();
+
+    return ResponseEntity.ok(new AuthToken(accessToken, tokenType, refreshToken));
   }
 
   @PostMapping("/signup")
@@ -131,7 +135,8 @@ public class UserController {
   public ResponseEntity<ResponseObjectDTO> forgotPassword(
       @RequestBody ForgotPasswordUser forgotPasswordUser) throws JSONException {
 
-    return ResponseEntity.status(HttpStatus.OK).body(userService.forgotPassword(forgotPasswordUser));
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(userService.forgotPassword(forgotPasswordUser));
   }
 
 }
